@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.xorgon</groupId>
+    <artifactId>Volleyball</artifactId>
+    <version>1.0.0</version>
+
+
+    <properties>
+        <package>me.xorgon.volleyball</package>
+        <main.class>${package}.VolleyballPlugin</main.class>
+
+        <commons-bukkit.version>0.5.3-SNAPSHOT</commons-bukkit.version>
+        <spigot-api.version>1.10.2-R0.1-SNAPSHOT</spigot-api.version>
+        <effectlib.version>5.1-SNAPSHOT</effectlib.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <id>elmakers</id>
+            <url>http://maven.elmakers.com/repository/</url>
+        </repository>
+        <repository>
+            <id>onarandombox-tp</id>
+            <url>http://repo.onarandombox.com/content/repositories/thirdparty-dev/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>${spigot-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.supaham.commons</groupId>
+            <artifactId>commons-bukkit</artifactId>
+            <version>${commons-bukkit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>6.1.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.slikey</groupId>
+            <artifactId>EffectLib</artifactId>
+            <version>${effectlib.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <defaultGoal>package</defaultGoal>
+        <sourceDirectory>${basedir}/src/main/java/</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.3</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <artifactSet>
+                            <includes>
+                                <include>com.supaham.commons:commons-bukkit</include>
+                                <include>de.slikey:EffectLib</include>
+                            </includes>
+                        </artifactSet>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+</project>

@@ -1,0 +1,8 @@
+name: ${artifactId}
+version: ${version}
+main: ${main.class}
+permissions:
+  vb.admin:
+    description: Allows administration of Volleyball
+    default: op
+commands:
