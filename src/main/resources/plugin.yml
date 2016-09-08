@@ -5,7 +5,7 @@ permissions:
   vb.admin:
     description: Allows administration of Volleyball
     default: op
-  vb.help:
+  vb.user:
     description: Allows the use of the '/vb help' command.
     default: true
 commands:

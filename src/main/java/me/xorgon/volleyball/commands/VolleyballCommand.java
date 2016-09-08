@@ -62,7 +62,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"help"}, desc = "Basic instructions on how to play volleyball.")
-    @CommandPermissions("vb.help")
+    @CommandPermissions("vb.user")
     public static void help(CommandContext args, CommandSender sender){
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "How to play volleyball:");
         sender.sendMessage(ChatColor.YELLOW + "Sprinting and jumping both increase the power of your shot.");
@@ -74,6 +74,33 @@ public class VolleyballCommand {
                 + ChatColor.LIGHT_PURPLE + Court.MAX_HITS + ChatColor.YELLOW + " shots to hit it back over.");
         sender.sendMessage(ChatColor.YELLOW + "The first team to score "
                 + ChatColor.LIGHT_PURPLE + Court.MAX_SCORE + ChatColor.YELLOW + " points wins!");
+    }
+    
+    @Command(aliases = {"join"}, desc = "Join the specified volleyball court.", min = 1, max = 1)
+    @CommandPermissions("vb.user")
+    public static void join(CommandContext args, CommandSender sender){
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            VManager manager = VolleyballPlugin.getInstance().getManager();
+            if (manager.getCourts().containsKey(args.getString(0))){
+                Court court = manager.getCourt(args.getString(0));
+                int redSize = court.getRedPlayers().size();
+                int blueSize = court.getBluePlayers().size();
+                if (redSize > blueSize && redSize < court.getMaxTeamSize()){
+                    player.teleport(court.getCenter(Court.Team.RED));
+                } else if (blueSize < court.getMaxTeamSize()){
+                    player.teleport(court.getCenter(Court.Team.BLUE));
+                } else {
+                    Vector redVec = court.getCenter(Court.Team.RED).toVector();
+                    Vector blueVec = court.getCenter(Court.Team.BLUE).toVector();
+                    Vector mid = redVec.midpoint(blueVec);
+                    Vector across = redVec.clone().subtract(blueVec);
+                    mid.add(new Vector(0,1,0).crossProduct(across.clone().multiply(1/across.length())).multiply(across.length()));
+                    player.sendMessage(ChatColor.YELLOW + "That game is full, but you can watch!");
+                    player.teleport(mid.toLocation(court.getWorld()));
+                }
+            }
+        }
     }
     
     @Command(aliases = {"start"},

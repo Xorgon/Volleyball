@@ -138,6 +138,12 @@ public class VListener implements Listener {
                 } else {
                     Bukkit.broadcastMessage(ChatColor.YELLOW + "Volleyball game starting in " + Court.START_DELAY_SECS + " seconds!");
                 }
+                FancyMessage joinMsg = new FancyMessage()
+                        .color(ChatColor.LIGHT_PURPLE)
+                        .text("Click here to join!")
+                        .command("/vb join " + court.getName())
+                        .tooltip(ChatColor.YELLOW + "Join the volleyball game.");
+                Bukkit.getOnlinePlayers().forEach(p -> joinMsg.send(p));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);
             }

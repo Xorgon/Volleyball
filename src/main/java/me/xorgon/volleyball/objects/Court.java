@@ -257,15 +257,22 @@ public class Court {
     }
 
     public void serve() {
-        Location servePoint;
-        if (turn == Team.RED) {
-            servePoint = redMin.getMidpoint(redMax).add(new Vector(0, 2.25, 0)).toLocation(world);
+        spawnBall(getCenter(turn));
+        if (turn == Team.RED){
             turn = Team.BLUE;
         } else {
-            servePoint = blueMin.getMidpoint(blueMax).add(new Vector(0, 2.25, 0)).toLocation(world);
             turn = Team.RED;
         }
-        spawnBall(servePoint);
+    }
+
+    public Location getCenter(Team team){
+        if (team == Team.RED) {
+            return redMin.getMidpoint(redMax).add(new Vector(0, 2.25, 0)).toLocation(world);
+        } else if (team == Team.BLUE) {
+            return blueMin.getMidpoint(blueMax).add(new Vector(0, 2.25, 0)).toLocation(world);
+        } else {
+            return null;
+        }
     }
 
     public boolean isFinished() {
@@ -307,6 +314,8 @@ public class Court {
         fireworks(winner);
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
+        setRedScore(0);
+        setBlueScore(0);
         if (started) {
             started = false;
         }
