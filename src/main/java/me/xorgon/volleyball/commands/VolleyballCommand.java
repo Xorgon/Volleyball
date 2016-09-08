@@ -62,6 +62,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"help"}, desc = "Basic instructions on how to play volleyball.")
+    @CommandPermissions("vb.help")
     public static void help(CommandContext args, CommandSender sender){
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "How to play volleyball:");
         sender.sendMessage(ChatColor.YELLOW + "Sprinting and jumping both increase the power of your shot.");
