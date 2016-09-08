@@ -351,7 +351,7 @@ public class Court {
 
         sendRedPlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.RED + "red" + ChatColor.YELLOW + " team.");
         sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
-        sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.GREEN + MAX_SCORE);
+        sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
 
         turn = Team.RED;
         redScore = 0;
@@ -529,7 +529,7 @@ public class Court {
                 c3 = redMin;
                 c4 = new Vector(redMin.getX(), y, blueMax.getZ());
             }
-            color = Color.GREEN;
+            color = Color.PURPLE;
         }
 
         EffectManager eM = VolleyballPlugin.getInstance().getEffectManager();

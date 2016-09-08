@@ -61,6 +61,20 @@ public class VolleyballCommand {
         sender.sendMessage(message.substring(0, message.length() - 2));
     }
 
+    @Command(aliases = {"help"}, desc = "Basic instructions on how to play volleyball.")
+    public static void help(CommandContext args, CommandSender sender){
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "How to play volleyball:");
+        sender.sendMessage(ChatColor.YELLOW + "Sprinting and jumping both increase the power of your shot.");
+        sender.sendMessage(ChatColor.YELLOW + "Use one, or both, to hit the ball as far as you want.");
+        sender.sendMessage(ChatColor.YELLOW + "It is recommended to just sprint for a serve.");
+        sender.sendMessage("");
+        sender.sendMessage(ChatColor.YELLOW +"Teams take turns serving.");
+        sender.sendMessage(ChatColor.YELLOW +"Each time the ball goes over the net, a team has "
+                + ChatColor.LIGHT_PURPLE + Court.MAX_HITS + ChatColor.YELLOW + " shots to hit it back over.");
+        sender.sendMessage(ChatColor.YELLOW + "The first team to score "
+                + ChatColor.LIGHT_PURPLE + Court.MAX_SCORE + ChatColor.YELLOW + " points wins!");
+    }
+    
     @Command(aliases = {"start"},
             desc = "Start a match on specified court.",
             usage = "<court name>",
@@ -111,7 +125,7 @@ public class VolleyballCommand {
             Player player = (Player) sender;
             VManager manager = VolleyballPlugin.getInstance().getManager();
             if (manager.isInCourt(player)) {
-                player.sendMessage(ChatColor.YELLOW + "You are in court " + ChatColor.GREEN + manager.getCourt(player).getName());
+                player.sendMessage(ChatColor.YELLOW + "You are in court " + ChatColor.LIGHT_PURPLE + manager.getCourt(player).getName());
             } else {
                 player.sendMessage(ChatColor.YELLOW + "You are not in a court.");
             }
@@ -128,7 +142,7 @@ public class VolleyballCommand {
             if (manager.isInCourt(player)){
                 color = manager.getCourt(player).getSide(player.getLocation()) == Court.Team.RED ? Color.RED : Color.BLUE;
             } else {
-                color = Color.GREEN;
+                color = Color.PURPLE;
             }
             double height;
             if (args.argsLength() > 0) {

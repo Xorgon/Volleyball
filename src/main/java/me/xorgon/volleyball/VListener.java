@@ -1,5 +1,6 @@
 package me.xorgon.volleyball;
 
+import com.supaham.commons.bukkit.text.FancyMessage;
 import me.xorgon.volleyball.events.BallLandEvent;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.Bukkit;
@@ -88,6 +89,15 @@ public class VListener implements Listener {
             if (court.isStarted()) {
                 return;
             }
+            FancyMessage helpMsg = new FancyMessage();
+            String helpTooltip = ChatColor.YELLOW + "Click here to learn how to play volleyball!";
+            helpMsg.color(ChatColor.LIGHT_PURPLE)
+                    .text("Click here")
+                    .command("/vb help")
+                    .tooltip(helpTooltip)
+                    .then()
+                    .color(ChatColor.YELLOW)
+                    .text(" to learn how to play volleyball!");
             if (court.getSide(player.getLocation()) == Court.Team.RED) {
                 if (court.getRedPlayers().size() < court.getMaxTeamSize()) {
                     if (!court.getRedPlayers().contains(player)) {
@@ -96,6 +106,7 @@ public class VListener implements Listener {
                         }
                         court.addPlayer(player, Court.Team.RED);
                         player.sendMessage(ChatColor.YELLOW + "You have joined " + ChatColor.RED + "red " + ChatColor.YELLOW + "team!");
+                        helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
@@ -111,6 +122,7 @@ public class VListener implements Listener {
                         }
                         court.addPlayer(player, Court.Team.BLUE);
                         player.sendMessage(ChatColor.YELLOW + "You have joined " + ChatColor.BLUE + "blue " + ChatColor.YELLOW + "team!");
+                        helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
