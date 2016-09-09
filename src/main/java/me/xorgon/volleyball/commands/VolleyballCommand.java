@@ -86,7 +86,7 @@ public class VolleyballCommand {
                 Court court = manager.getCourt(args.getString(0));
                 int redSize = court.getRedPlayers().size();
                 int blueSize = court.getBluePlayers().size();
-                if (redSize > blueSize && redSize < court.getMaxTeamSize()){
+                if (redSize < blueSize && redSize < court.getMaxTeamSize()){
                     player.teleport(court.getCenter(Court.Team.RED));
                 } else if (blueSize < court.getMaxTeamSize()){
                     player.teleport(court.getCenter(Court.Team.BLUE));
