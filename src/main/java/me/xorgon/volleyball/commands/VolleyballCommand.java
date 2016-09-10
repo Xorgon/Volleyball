@@ -146,9 +146,14 @@ public class VolleyballCommand {
     @CommandPermissions("vb.admin")
     public static void spawn(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
+            VManager manager = VolleyballPlugin.getInstance().getManager();
             Player player = (Player) sender;
-            Location loc = player.getLocation().add(0, 1.75, 0);
-            VolleyballPlugin.getInstance().getManager().getCourt(player).spawnBall(loc);
+            if (manager.getCourt(player) != null) {
+                Location loc = player.getLocation().add(0, 1.25, 0);
+                manager.getCourt(player).spawnBall(loc);
+            } else {
+                player.sendMessage(ChatColor.YELLOW + "You aren't in a court.");
+            }
         }
     }
 
