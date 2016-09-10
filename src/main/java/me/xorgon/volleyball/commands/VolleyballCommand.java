@@ -26,7 +26,6 @@ public class VolleyballCommand {
     public static class VolleyballRootCommand {
 
         @Command(aliases = {"volleyball", "vb"}, desc = "The root Volleyball command.")
-        @CommandPermissions("vb.admin")
         @NestedCommand(value = {VolleyballCommand.class, VBSetCommand.VBSetRootCommand.class})
         public static void volleyball(CommandContext args, CommandSender sender) {
         }
@@ -37,6 +36,7 @@ public class VolleyballCommand {
             usage = "<court name>",
             min = 1,
             max = 1)
+    @CommandPermissions("vb.admin")
     public static void addCourt(CommandContext args, CommandSender sender) {
         VolleyballPlugin.getInstance().getManager().addCourt(args.getString(0).toLowerCase());
         sender.sendMessage(ChatColor.YELLOW + "Created court.");
@@ -47,12 +47,14 @@ public class VolleyballCommand {
             usage = "<court name>",
             min = 1,
             max = 1)
+    @CommandPermissions("vb.admin")
     public static void removeCourt(CommandContext args, CommandSender sender) {
         VolleyballPlugin.getInstance().getManager().removeCourt(args.getString(0).toLowerCase());
         sender.sendMessage(ChatColor.YELLOW + "Removed court.");
     }
 
     @Command(aliases = {"listcourts", "list"}, desc = "")
+    @CommandPermissions("vb.admin")
     public static void listcourts(CommandContext args, CommandSender sender){
         String message = ChatColor.YELLOW + "Courts: ";
         for(Court court : VolleyballPlugin.getInstance().getManager().getCourts().values()){
@@ -107,6 +109,7 @@ public class VolleyballCommand {
             desc = "Start a match on specified court.",
             usage = "<court name>",
             max = 1)
+    @CommandPermissions("vb.admin")
     public static void start(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             if (args.argsLength() == 0) {
@@ -121,6 +124,7 @@ public class VolleyballCommand {
             desc = "End a match on specified court.",
             usage = "<court name>",
             max = 1)
+    @CommandPermissions("vb.admin")
     public static void end(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             VManager manager = VolleyballPlugin.getInstance().getManager();
@@ -139,6 +143,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"spawn"}, desc = "Spawn a volleyball.")
+    @CommandPermissions("vb.admin")
     public static void spawn(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -148,6 +153,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"testbound"}, desc = "Tells you if you're inside a court.")
+    @CommandPermissions("vb.admin")
     public static void testBound(CommandContext args, CommandSender sender){
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -161,6 +167,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"romancandle", "rc"}, desc = "Launch a roman candle.")
+    @CommandPermissions("vb.admin")
     public static void romanCandle(CommandContext args, CommandSender sender){
         if (sender instanceof Player) {
             EffectManager effectManager = VolleyballPlugin.getInstance().getEffectManager();
@@ -184,6 +191,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"clear"}, desc = "Remove all volleyballs.")
+    @CommandPermissions("vb.admin")
     public static void clear(CommandContext args, CommandSender sender) {
         VolleyballPlugin.getInstance().getManager().clearVolleyballs();
         sender.sendMessage(ChatColor.YELLOW + "Removed volleyballs.");
@@ -193,6 +201,7 @@ public class VolleyballCommand {
 
         public static class VBSetRootCommand {
             @Command(aliases = {"set"}, desc = "Define a setting for a court.")
+            @CommandPermissions("vb.admin")
             @NestedCommand(value = {VBSetCommand.class})
             public static void set(CommandContext args, CommandSender sender) {
             }
