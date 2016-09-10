@@ -97,7 +97,8 @@ public class VListener implements Listener {
                     .tooltip(helpTooltip)
                     .then()
                     .color(ChatColor.YELLOW)
-                    .text(" to learn how to play volleyball!");
+                    .text(" for help!")
+                    .then();
             if (court.getSide(player.getLocation()) == Court.Team.RED) {
                 if (court.getRedPlayers().size() < court.getMaxTeamSize()) {
                     if (!court.getRedPlayers().contains(player)) {
@@ -105,8 +106,9 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.RED);
-                        player.sendMessage(ChatColor.YELLOW + "You have joined " + ChatColor.RED + "red " + ChatColor.YELLOW + "team!");
-                        helpMsg.send(player);
+                        FancyMessage msg = new FancyMessage(ChatColor.YELLOW + "You have joined " + ChatColor.RED + "red " + ChatColor.YELLOW + "team! ");
+                        msg.append(helpMsg);
+                        msg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
@@ -121,8 +123,9 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.BLUE);
-                        player.sendMessage(ChatColor.YELLOW + "You have joined " + ChatColor.BLUE + "blue " + ChatColor.YELLOW + "team!");
-                        helpMsg.send(player);
+                        FancyMessage msg = new FancyMessage(ChatColor.YELLOW + "You have joined " + ChatColor.BLUE + "blue " + ChatColor.YELLOW + "team! ");
+                        msg.append(helpMsg);
+                        msg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {

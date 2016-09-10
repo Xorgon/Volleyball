@@ -13,6 +13,7 @@ import org.bukkit.entity.Slime;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -299,7 +300,7 @@ public class Court {
         } else {
             message = ChatColor.YELLOW + "It's a draw!";
         }
-        sendAllPlayersMessage(message);
+        sendNearbyPlayersMessage(message);
         fireworks(getWinning());
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
@@ -342,6 +343,15 @@ public class Court {
         players.forEach(p -> p.sendMessage(message));
     }
 
+    public void sendNearbyPlayersMessage(String message) {
+        Vector redC = getCenter(Team.RED).toVector();
+        Vector blueC = getCenter(Team.BLUE).toVector();
+        double length = 2 * redC.distance(blueC);
+        Location loc =  redC.midpoint(blueC).toLocation(world);
+        Collection<Entity> nearby = world.getNearbyEntities(loc, length, length / 2, length);
+        nearby.stream().filter(e -> e instanceof Player).forEach(p -> p.sendMessage(message));
+    }
+
     public void startGame(boolean force) {
         if (!force && started) {
             return;
@@ -360,7 +370,7 @@ public class Court {
 
         sendRedPlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.RED + "red" + ChatColor.YELLOW + " team.");
         sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
-        sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
+        //sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
 
         turn = Team.RED;
         redScore = 0;
@@ -470,17 +480,16 @@ public class Court {
         String score = ChatColor.RED + "Red " + getRedScore() + ChatColor.YELLOW
                 + " - " + ChatColor.BLUE + getBlueScore() + " Blue";
 
-        sendAllPlayersMessage(message);
-        sendAllPlayersMessage(score);
+        sendNearbyPlayersMessage(message + " " + score);
 
         boolean redMP = getRedScore() == Court.MAX_SCORE - 1 && getBlueScore() < MAX_SCORE;
         boolean blueMP = getBlueScore() == Court.MAX_SCORE - 1 && getRedScore() < MAX_SCORE;
         if (redMP && blueMP) {
-            sendAllPlayersMessage(ChatColor.YELLOW + "Double match point!");
+            sendNearbyPlayersMessage(ChatColor.YELLOW + "Double match point!");
         } else if (redMP) {
-            sendAllPlayersMessage(ChatColor.RED + "Red " + ChatColor.YELLOW + "match point!");
+            sendNearbyPlayersMessage(ChatColor.RED + "Red " + ChatColor.YELLOW + "match point!");
         } else if (blueMP) {
-            sendAllPlayersMessage(ChatColor.BLUE + "Blue " + ChatColor.YELLOW + "match point!");
+            sendNearbyPlayersMessage(ChatColor.BLUE + "Blue " + ChatColor.YELLOW + "match point!");
         }
 
         BallLandEffect effect = new BallLandEffect(VolleyballPlugin.getInstance().getEffectManager(), this, scoringTeam);
