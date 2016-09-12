@@ -144,35 +144,19 @@ public class Court {
     }
 
     public double getPower() {
-        double length;
-
-        double first = blueMin.distance(redMax);
-        double second = redMin.distance(blueMax);
-        if (first > second) {
-            double dx = Math.abs(redMax.getX() - blueMin.getX());
-            double dz = Math.abs(redMax.getZ() - blueMin.getZ());
-            if (dx > dz) {
-                length = dx;
-            } else {
-                length = dz;
-            }
-        } else {
-            double dx = Math.abs(blueMax.getX() - redMin.getX());
-            double dz = Math.abs(blueMax.getZ() - redMin.getZ());
-            if (dx > dz) {
-                length = dx;
-            } else {
-                length = dz;
-            }
-        }
-        return Math.pow(length, 0.75) / 16.792;
+        // Method devised by James 'Octobox' Griffin.
+        Vector unitV = getCenter(Team.RED).toVector().subtract(getCenter(Team.BLUE).toVector()).normalize();
+        double L1 = Math.abs(unitV.dot(redMax.clone().subtract(blueMin)));
+        double L2 = Math.abs(unitV.dot(blueMax.clone().subtract(redMin)));
+        double length = Math.max(L1, L2);
+        return Math.pow(length, 0.75) / 16.792; // Values adjusted for best experience.
     }
 
     public void spawnBall(Location loc) {
         if (this.ball != null) {
             removeBall();
         }
-        Slime ball = (Slime) loc.getWorld().spawnEntity(loc, EntityType.SLIME);
+        Slime ball = (Slime) loc.getWorld().spawnEntity(loc.setDirection(new Vector(1, 0, 0)), EntityType.SLIME);
         ball.setSize(ballSize);
         ball.setAI(false);
         ball.setGravity(false);
