@@ -316,12 +316,12 @@ public class Court {
         sendNearbyPlayersMessage(message);
 
         revertScoreboards();
-        setRedScore(0);
-        setBlueScore(0);
 
         fireworks(getWinning());
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
+        setRedScore(0);
+        setBlueScore(0);
         if (started) {
             started = false;
         }
