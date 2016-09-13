@@ -95,6 +95,9 @@
                             <includes>
                                 <include>com.supaham.commons:commons-bukkit</include>
                                 <include>de.slikey:EffectLib</include>
+                                <include>com.sk89q.worldedit</include>
+                                <include>ninja.leaping.configurate:configurate-core</include>
+                                <include>ninja.leaping.configurate:configurate-hocon</include>
                             </includes>
                         </artifactSet>
                         <createDependencyReducedPom>false</createDependencyReducedPom>
