@@ -34,7 +34,14 @@ public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
     @Override
     public void onDisable() {
         super.onDisable();
-        manager.getCourts().values().forEach(Court::removeBall);
+        manager.getCourts().values().forEach(c -> {
+            if (c.isStarted()) {
+                c.endGame();
+            } else {
+                c.removeBall();
+            }
+            c.revertScoreboards();
+        });
         manager.getConfig().save();
         effectManager.dispose();
     }
@@ -76,7 +83,7 @@ public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
         return true;
     }
 
-    public void setupCommands(){
+    public void setupCommands() {
         this.commands = new CommandsManager<CommandSender>() {
             @Override
             public boolean hasPermission(CommandSender commandSender, String s) {

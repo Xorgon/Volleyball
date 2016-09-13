@@ -1,16 +1,20 @@
 package me.xorgon.volleyball.objects;
 
+import com.supaham.commons.bukkit.text.FancyMessage;
+import com.supaham.commons.bukkit.title.Title;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.VolleyballPlugin;
 import me.xorgon.volleyball.effects.BallLandEffect;
 import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
+import me.xorgon.volleyball.util.TitleUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
-import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
@@ -69,6 +73,11 @@ public class Court {
         scoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getNewScoreboard();
         scoreboard.registerNewTeam("red").setPrefix(ChatColor.RED + "");
         scoreboard.registerNewTeam("blue").setPrefix(ChatColor.BLUE + "");
+        Objective obj = scoreboard.registerNewObjective("vbscore", "dummy");
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+        obj.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Score");
+        obj.getScore(ChatColor.RED + "Red").setScore(0);
+        obj.getScore(ChatColor.BLUE + "Blue").setScore(0);
     }
 
     public boolean isInCourt(Location location) {
@@ -227,9 +236,9 @@ public class Court {
 
     public void addPoint(Team team) {
         if (team == Team.RED) {
-            redScore += 1;
+            setRedScore(redScore + 1);
         } else if (team == Team.BLUE) {
-            blueScore += 1;
+            setBlueScore(blueScore + 1);
         }
     }
 
@@ -248,6 +257,7 @@ public class Court {
 
     public void setRedScore(int redScore) {
         this.redScore = redScore;
+        scoreboard.getObjective(DisplaySlot.SIDEBAR).getScore(ChatColor.RED + "Red").setScore(redScore);
     }
 
     public int getBlueScore() {
@@ -256,6 +266,7 @@ public class Court {
 
     public void setBlueScore(int blueScore) {
         this.blueScore = blueScore;
+        scoreboard.getObjective(DisplaySlot.SIDEBAR).getScore(ChatColor.BLUE + "Blue").setScore(blueScore);
     }
 
     public void serve() {
@@ -305,6 +316,8 @@ public class Court {
         sendNearbyPlayersMessage(message);
 
         revertScoreboards();
+        setRedScore(0);
+        setBlueScore(0);
 
         fireworks(getWinning());
         redPlayers = new ArrayList<>();
@@ -352,7 +365,7 @@ public class Court {
         getNearbyPlayers().forEach(p -> p.sendMessage(message));
     }
 
-    public List<Player> getNearbyPlayers(){
+    public List<Player> getNearbyPlayers() {
         Vector redC = getCenter(Team.RED).toVector();
         Vector blueC = getCenter(Team.BLUE).toVector();
         double length = 2 * redC.distance(blueC);
@@ -386,8 +399,8 @@ public class Court {
         setScoreboards(getNearbyPlayers());
 
         turn = Team.RED;
-        redScore = 0;
-        blueScore = 0;
+        setRedScore(0);
+        setBlueScore(0);
         started = true;
         starting = false;
 
@@ -490,10 +503,12 @@ public class Court {
 
         String message = (scoringTeam == Court.Team.RED ? ChatColor.RED + "Red " : ChatColor.BLUE + "Blue ")
                 + ChatColor.YELLOW + "team scored!";
-        String score = ChatColor.RED + "Red " + getRedScore() + ChatColor.YELLOW
-                + " - " + ChatColor.BLUE + getBlueScore() + " Blue";
+//        String score = ChatColor.RED + "Red " + getRedScore() + ChatColor.YELLOW
+//                + " - " + ChatColor.BLUE + getBlueScore() + " Blue";
+//
+//        sendNearbyPlayersMessage(message + " " + score);
 
-        sendNearbyPlayersMessage(message + " " + score);
+        getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
 
         boolean redMP = getRedScore() == Court.MAX_SCORE - 1 && getBlueScore() < MAX_SCORE;
         boolean blueMP = getBlueScore() == Court.MAX_SCORE - 1 && getRedScore() < MAX_SCORE;
@@ -582,6 +597,7 @@ public class Court {
     }
 
     public void removePlayer(Player player) {
+        revertScoreboard(player);
         if (redPlayers.contains(player)) {
             redPlayers.remove(player);
         } else if (bluePlayers.contains(player)) {
@@ -590,6 +606,9 @@ public class Court {
     }
 
     public void addPlayer(Player player, Team team) {
+        if (!scoreboards.containsKey(player)) {
+            scoreboards.put(player, player.getScoreboard());
+        }
         player.setScoreboard(scoreboard);
         if (team == Team.RED) {
             redPlayers.add(player);
@@ -607,12 +626,13 @@ public class Court {
 
     /**
      * Sets the scoreboard for given players to be the court's scoreboard and saves their previous scoreboard.
+     *
      * @param players players for whom to set the scoreboard.
      */
-    public void setScoreboards(List<Player> players){
-        Scoreboard mainScoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getMainScoreboard();
-        players.stream().filter(p -> p.getScoreboard() != mainScoreboard).forEach(p -> {
-            scoreboards.put(p, p.getScoreboard());
+    public void setScoreboards(List<Player> players) {
+        players.forEach(p -> {
+            if (!scoreboards.containsKey(p))
+                scoreboards.put(p, p.getScoreboard());
             p.setScoreboard(scoreboard);
         });
     }
@@ -620,9 +640,20 @@ public class Court {
     /**
      * Reverts all the players' scoreboards to those stored in 'scoreboards' and clears 'scoreboards'.
      */
-    public void revertScoreboards(){
-        scoreboards.forEach(Player::setScoreboard);
-        scoreboards.clear();
+    public void revertScoreboards() {
+        List<Player> reverted = new ArrayList<>();
+        scoreboards.forEach((p, sb) -> {
+            p.setScoreboard(sb);
+            reverted.add(p);
+        });
+        reverted.forEach(p -> scoreboards.remove(p));
+    }
+
+    public void revertScoreboard(Player player) {
+        if (scoreboards.containsKey(player)) {
+            player.setScoreboard(scoreboards.get(player));
+            scoreboards.remove(player);
+        }
     }
 
     public enum Team {
