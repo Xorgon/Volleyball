@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -60,10 +61,15 @@ public class Court {
 
     private BallTrailEffect trailEffect;
 
+    private Scoreboard scoreboard;
+
     public Court(String name) {
         this.name = name;
         started = false;
         initialized = false;
+        scoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getNewScoreboard();
+        scoreboard.registerNewTeam("red").setPrefix(ChatColor.RED + "");
+        scoreboard.registerNewTeam("blue").setPrefix(ChatColor.BLUE + "");
     }
 
     public boolean isInCourt(Location location) {
@@ -156,13 +162,24 @@ public class Court {
         if (this.ball != null) {
             removeBall();
         }
-        Slime ball = (Slime) loc.getWorld().spawnEntity(loc.setDirection(new Vector(1, 0, 0)), EntityType.SLIME);
+        Slime ball = (Slime) loc.getWorld().spawnEntity(loc.setDirection(new Vector(0, 1, 0)), EntityType.SLIME);
         ball.setSize(ballSize);
         ball.setAI(false);
         ball.setGravity(false);
         this.ball = ball;
+        ball.setGlowing(true);
+        setBallColour(turn);
         trailEffect = new BallTrailEffect(VolleyballPlugin.getInstance().getEffectManager(), this);
         trailEffect.start();
+    }
+
+    public void setBallColour(Team team) {
+        if (team == Team.RED) {
+            scoreboard.getTeam("red").addEntry(ball.getUniqueId().toString());
+        } else if (team == Team.BLUE) {
+            scoreboard.getTeam("blue").addEntry(ball.getUniqueId().toString());
+        } else {
+        }
     }
 
     public void removeBall() {
@@ -222,6 +239,7 @@ public class Court {
     }
 
     public void setLastHitBy(Team lastHitBy) {
+        setBallColour(lastHitBy);
         this.lastHitBy = lastHitBy;
     }
 
@@ -243,14 +261,15 @@ public class Court {
 
     public void serve() {
         spawnBall(getCenter(turn));
-        if (turn == Team.RED){
+        setLastHitBy(turn);
+        if (turn == Team.RED) {
             turn = Team.BLUE;
         } else {
             turn = Team.RED;
         }
     }
 
-    public Location getCenter(Team team){
+    public Location getCenter(Team team) {
         if (team == Team.RED) {
             return redMin.getMidpoint(redMax).add(new Vector(0, 2.25, 0)).toLocation(world);
         } else if (team == Team.BLUE) {
@@ -328,12 +347,18 @@ public class Court {
     }
 
     public void sendNearbyPlayersMessage(String message) {
+        getNearbyPlayers().forEach(p -> p.sendMessage(message));
+    }
+
+    public List<Player> getNearbyPlayers(){
         Vector redC = getCenter(Team.RED).toVector();
         Vector blueC = getCenter(Team.BLUE).toVector();
         double length = 2 * redC.distance(blueC);
-        Location loc =  redC.midpoint(blueC).toLocation(world);
+        Location loc = redC.midpoint(blueC).toLocation(world);
         Collection<Entity> nearby = world.getNearbyEntities(loc, length, length / 2, length);
-        nearby.stream().filter(e -> e instanceof Player).forEach(p -> p.sendMessage(message));
+        List<Player> players = new ArrayList<>();
+        nearby.stream().filter(e -> e instanceof Player).forEach(p -> players.add((Player) p));
+        return players;
     }
 
     public void startGame(boolean force) {
@@ -355,6 +380,8 @@ public class Court {
         sendRedPlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.RED + "red" + ChatColor.YELLOW + " team.");
         sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
         //sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
+
+        getNearbyPlayers().forEach(p -> p.setScoreboard(scoreboard));
 
         turn = Team.RED;
         redScore = 0;
@@ -561,6 +588,7 @@ public class Court {
     }
 
     public void addPlayer(Player player, Team team) {
+        player.setScoreboard(scoreboard);
         if (team == Team.RED) {
             redPlayers.add(player);
         } else if (team == Team.BLUE) {

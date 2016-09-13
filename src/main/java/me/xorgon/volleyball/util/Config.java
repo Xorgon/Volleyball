@@ -4,10 +4,8 @@ import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import me.xorgon.volleyball.util.ConfigUtil;
 
 import java.io.File;
 import java.io.IOException;
