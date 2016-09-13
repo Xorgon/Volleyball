@@ -10,13 +10,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Court {
 
@@ -43,6 +41,7 @@ public class Court {
 
     private List<Player> redPlayers = new ArrayList<>();
     private List<Player> bluePlayers = new ArrayList<>();
+    private Map<Player, Scoreboard> scoreboards = new HashMap<>();
 
     private int minTeamSize = 1;
     private int maxTeamSize = 6;
@@ -304,6 +303,9 @@ public class Court {
             message = ChatColor.YELLOW + "It's a draw!";
         }
         sendNearbyPlayersMessage(message);
+
+        revertScoreboards();
+
         fireworks(getWinning());
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
@@ -381,7 +383,7 @@ public class Court {
         sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
         //sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
 
-        getNearbyPlayers().forEach(p -> p.setScoreboard(scoreboard));
+        setScoreboards(getNearbyPlayers());
 
         turn = Team.RED;
         redScore = 0;
@@ -601,6 +603,26 @@ public class Court {
         players.addAll(redPlayers);
         players.addAll(bluePlayers);
         return players;
+    }
+
+    /**
+     * Sets the scoreboard for given players to be the court's scoreboard and saves their previous scoreboard.
+     * @param players players for whom to set the scoreboard.
+     */
+    public void setScoreboards(List<Player> players){
+        Scoreboard mainScoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getMainScoreboard();
+        players.stream().filter(p -> p.getScoreboard() != mainScoreboard).forEach(p -> {
+            scoreboards.put(p, p.getScoreboard());
+            p.setScoreboard(scoreboard);
+        });
+    }
+
+    /**
+     * Reverts all the players' scoreboards to those stored in 'scoreboards' and clears 'scoreboards'.
+     */
+    public void revertScoreboards(){
+        scoreboards.forEach(Player::setScoreboard);
+        scoreboards.clear();
     }
 
     public enum Team {
