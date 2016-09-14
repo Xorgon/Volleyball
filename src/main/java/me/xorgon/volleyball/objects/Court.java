@@ -5,6 +5,7 @@ import me.xorgon.volleyball.VolleyballPlugin;
 import me.xorgon.volleyball.effects.BallLandEffect;
 import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
+import me.xorgon.volleyball.schedulers.NearbyPlayersChecker;
 import me.xorgon.volleyball.util.TitleUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -64,10 +65,13 @@ public class Court {
 
     private Scoreboard scoreboard;
 
+    private NearbyPlayersChecker nearbyChecker;
+
     public Court(String name) {
         this.name = name;
         started = false;
         initialized = false;
+
         scoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getNewScoreboard();
         scoreboard.registerNewTeam("red").setPrefix(ChatColor.RED + "");
         scoreboard.registerNewTeam("blue").setPrefix(ChatColor.BLUE + "");
@@ -76,6 +80,9 @@ public class Court {
         obj.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Score");
         obj.getScore(ChatColor.RED + "Red").setScore(0);
         obj.getScore(ChatColor.BLUE + "Blue").setScore(0);
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(VolleyballPlugin.getInstance(), new NearbyPlayersChecker(this),
+                                                        20, 10);
     }
 
     public boolean isInCourt(Location location) {
@@ -630,6 +637,13 @@ public class Court {
         });
     }
 
+    public void setScoreboard(Player player) {
+        if (!scoreboards.containsKey(player)){
+            scoreboards.put(player, player.getScoreboard());
+            player.setScoreboard(scoreboard);
+        }
+    }
+
     /**
      * Reverts all the players' scoreboards to those stored in 'scoreboards' and clears 'scoreboards'.
      */
@@ -647,6 +661,14 @@ public class Court {
             player.setScoreboard(scoreboards.get(player));
             scoreboards.remove(player);
         }
+    }
+
+    public boolean hasScoreboard(Player player) {
+        return scoreboards.containsKey(player);
+    }
+
+    public Map<Player, Scoreboard> getScoreboards(){
+        return scoreboards;
     }
 
     public enum Team {
