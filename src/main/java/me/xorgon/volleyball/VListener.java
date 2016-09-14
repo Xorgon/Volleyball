@@ -134,7 +134,7 @@ public class VListener implements Listener {
                     }
                 }
             }
-            if (court.hasEnoughPlayers() && !court.isStarting()) {
+            if (!court.isStarting()) {
                 if (court.getDisplayName() != null) {
                     Bukkit.broadcastMessage(ChatColor.YELLOW + "Volleyball game starting at the " + court.getDisplayName() +
                             " court in " + Court.START_DELAY_SECS + " seconds!");

@@ -1,7 +1,5 @@
 package me.xorgon.volleyball.objects;
 
-import com.supaham.commons.bukkit.text.FancyMessage;
-import com.supaham.commons.bukkit.title.Title;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.VolleyballPlugin;
 import me.xorgon.volleyball.effects.BallLandEffect;
@@ -394,7 +392,6 @@ public class Court {
 
         sendRedPlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.RED + "red" + ChatColor.YELLOW + " team.");
         sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
-        //sendAllPlayersMessage(ChatColor.YELLOW + "Playing to " + ChatColor.LIGHT_PURPLE + MAX_SCORE);
 
         setScoreboards(getNearbyPlayers());
 
@@ -503,10 +500,6 @@ public class Court {
 
         String message = (scoringTeam == Court.Team.RED ? ChatColor.RED + "Red " : ChatColor.BLUE + "Blue ")
                 + ChatColor.YELLOW + "team scored!";
-//        String score = ChatColor.RED + "Red " + getRedScore() + ChatColor.YELLOW
-//                + " - " + ChatColor.BLUE + getBlueScore() + " Blue";
-//
-//        sendNearbyPlayersMessage(message + " " + score);
 
         getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
 
