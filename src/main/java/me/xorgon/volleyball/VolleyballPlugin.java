@@ -34,14 +34,7 @@ public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
     @Override
     public void onDisable() {
         super.onDisable();
-        manager.getCourts().values().forEach(c -> {
-            if (c.isStarted()) {
-                c.endGame();
-            } else {
-                c.removeBall();
-            }
-            c.revertScoreboards();
-        });
+        manager.getCourts().values().forEach(Court::resetCourt);
         manager.getConfig().save();
         effectManager.dispose();
     }

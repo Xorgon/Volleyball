@@ -689,4 +689,11 @@ public class Court {
         RED, BLUE, NONE
     }
 
+    public void resetCourt() {
+        if (isStarted()) {
+            endGame();
+        } else {
+            removeBall();
+        }
+    }
 }
