@@ -7,7 +7,9 @@ import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
 import me.xorgon.volleyball.schedulers.NearbyPlayersChecker;
 import me.xorgon.volleyball.util.TitleUtil;
+import net.minecraft.server.v1_11_R1.EntitySlime;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftSlime;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class Court {
@@ -176,14 +179,25 @@ public class Court {
             removeBall();
         }
         Slime ball = (Slime) loc.getWorld().spawnEntity(loc.setDirection(new Vector(0, 1, 0)), EntityType.SLIME);
+        fixStupidMinecraftNoAI(ball);
         ball.setSize(ballSize);
-        ball.setAI(false);
         ball.setGravity(false);
         this.ball = ball;
         ball.setGlowing(true);
         setBallColour(turn);
         trailEffect = new BallTrailEffect(VolleyballPlugin.getInstance().getEffectManager(), this);
         trailEffect.start();
+    }
+
+    public void fixStupidMinecraftNoAI(Slime ball){
+        EntitySlime handle = ((CraftSlime) ball).getHandle();
+        try {
+            Field b = handle.goalSelector.getClass().getDeclaredField("b");
+            b.setAccessible(true);
+            ((Set) b.get(handle.goalSelector)).clear();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setBallColour(Team team) {
