@@ -4,6 +4,7 @@ import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.events.BallLandEvent;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftSlime;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -26,7 +27,7 @@ public class BallChecker implements Runnable {
         }
     }
 
-    public class BallRemovalScheduler implements Runnable{
+    public class BallRemovalScheduler implements Runnable {
 
         private Court court;
 
@@ -36,7 +37,7 @@ public class BallChecker implements Runnable {
 
         @Override
         public void run() {
-            if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY()){
+            if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY()) {
                 Bukkit.getPluginManager().callEvent(new BallLandEvent(court));
             }
         }

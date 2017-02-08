@@ -85,7 +85,7 @@ public class Court {
         obj.getScore(ChatColor.BLUE + "Blue").setScore(0);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(VolleyballPlugin.getInstance(), new NearbyPlayersChecker(this),
-                                                        20, 10);
+                20, 10);
     }
 
     public boolean isInCourt(Location location) {
@@ -189,12 +189,14 @@ public class Court {
         trailEffect.start();
     }
 
-    public void fixStupidMinecraftNoAI(Slime ball){
+    public void fixStupidMinecraftNoAI(Slime ball) {
         EntitySlime handle = ((CraftSlime) ball).getHandle();
         try {
             Field b = handle.goalSelector.getClass().getDeclaredField("b");
             b.setAccessible(true);
             ((Set) b.get(handle.goalSelector)).clear();
+            ((Set) b.get(handle.targetSelector)).clear();
+            handle.yaw = 0;
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -652,7 +654,7 @@ public class Court {
     }
 
     public void setScoreboard(Player player) {
-        if (!scoreboards.containsKey(player)){
+        if (!scoreboards.containsKey(player)) {
             scoreboards.put(player, player.getScoreboard());
             player.setScoreboard(scoreboard);
         }
@@ -681,7 +683,7 @@ public class Court {
         return scoreboards.containsKey(player);
     }
 
-    public Map<Player, Scoreboard> getScoreboards(){
+    public Map<Player, Scoreboard> getScoreboards() {
         return scoreboards;
     }
 

@@ -3,6 +3,7 @@ package me.xorgon.volleyball;
 import me.xorgon.volleyball.objects.Court;
 import me.xorgon.volleyball.schedulers.BallChecker;
 import me.xorgon.volleyball.schedulers.MinPlayersChecker;
+import me.xorgon.volleyball.schedulers.SetBallFacing;
 import me.xorgon.volleyball.util.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -23,6 +24,7 @@ public class VManager {
 
     public VManager() {
         ballCheckerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new BallChecker(this), 20L, 4L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new SetBallFacing(this), 0L, 1L);
         minplayersCheckerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new MinPlayersChecker(this), 20L, 20L);
         config = new Config(this);
         courts = config.load();
