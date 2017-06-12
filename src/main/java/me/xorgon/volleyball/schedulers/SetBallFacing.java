@@ -1,12 +1,9 @@
 package me.xorgon.volleyball.schedulers;
 
 import me.xorgon.volleyball.VManager;
-import me.xorgon.volleyball.events.BallLandEvent;
 import me.xorgon.volleyball.objects.Court;
-import net.minecraft.server.v1_11_R1.EntitySlime;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftSlime;
-import org.bukkit.entity.Arrow;
+import net.minecraft.server.v1_12_R1.EntitySlime;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftSlime;
 
 public class SetBallFacing implements Runnable {
 
