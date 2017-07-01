@@ -55,9 +55,9 @@ public class VolleyballCommand {
 
     @Command(aliases = {"listcourts", "list"}, desc = "")
     @CommandPermissions("vb.admin")
-    public static void listcourts(CommandContext args, CommandSender sender){
+    public static void listcourts(CommandContext args, CommandSender sender) {
         String message = ChatColor.YELLOW + "Courts: ";
-        for(Court court : VolleyballPlugin.getInstance().getManager().getCourts().values()){
+        for (Court court : VolleyballPlugin.getInstance().getManager().getCourts().values()) {
             message = message.concat(court.getName() + ", ");
         }
         sender.sendMessage(message.substring(0, message.length() - 2));
@@ -65,46 +65,46 @@ public class VolleyballCommand {
 
     @Command(aliases = {"help"}, desc = "Basic instructions on how to play volleyball.")
     @CommandPermissions("vb.user")
-    public static void help(CommandContext args, CommandSender sender){
+    public static void help(CommandContext args, CommandSender sender) {
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "How to play volleyball:");
         sender.sendMessage(ChatColor.YELLOW + "Sprinting and jumping both increase the power of your shot.");
         sender.sendMessage(ChatColor.YELLOW + "Use one, or both, to hit the ball as far as you want.");
         sender.sendMessage(ChatColor.YELLOW + "It is recommended to just sprint for a serve.");
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.YELLOW +"Teams take turns serving.");
-        sender.sendMessage(ChatColor.YELLOW +"Each time the ball goes over the net, a team has "
+        sender.sendMessage(ChatColor.YELLOW + "Teams take turns serving.");
+        sender.sendMessage(ChatColor.YELLOW + "Each time the ball goes over the net, a team has "
                 + ChatColor.LIGHT_PURPLE + Court.MAX_HITS + ChatColor.YELLOW + " shots to hit it back over.");
         sender.sendMessage(ChatColor.YELLOW + "The first team to score "
                 + ChatColor.LIGHT_PURPLE + Court.MAX_SCORE + ChatColor.YELLOW + " points wins!");
     }
-    
-    @Command(aliases = {"join"}, desc = "Join the specified volleyball court.", min = 1, max = 1)
+
+    @Command(aliases = {"join"}, desc = "Join the specified volleyball court.", usage = "<court name> ", min = 1, max = 1)
     @CommandPermissions("vb.user")
-    public static void join(CommandContext args, CommandSender sender){
+    public static void join(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             VManager manager = VolleyballPlugin.getInstance().getManager();
-            if (manager.getCourts().containsKey(args.getString(0))){
+            if (manager.getCourts().containsKey(args.getString(0))) {
                 Court court = manager.getCourt(args.getString(0));
                 int redSize = court.getRedPlayers().size();
                 int blueSize = court.getBluePlayers().size();
-                if (redSize < blueSize && redSize < court.getMaxTeamSize()){
+                if (redSize < blueSize && redSize < court.getMaxTeamSize()) {
                     player.teleport(court.getCenter(Court.Team.RED));
-                } else if (blueSize < court.getMaxTeamSize()){
+                } else if (blueSize < court.getMaxTeamSize()) {
                     player.teleport(court.getCenter(Court.Team.BLUE));
                 } else {
                     Vector redVec = court.getCenter(Court.Team.RED).toVector();
                     Vector blueVec = court.getCenter(Court.Team.BLUE).toVector();
                     Vector mid = redVec.midpoint(blueVec);
                     Vector across = redVec.clone().subtract(blueVec);
-                    mid.add(new Vector(0,1,0).crossProduct(across.clone().multiply(1/across.length())).multiply(across.length()));
+                    mid.add(new Vector(0, 1, 0).crossProduct(across.clone().multiply(1 / across.length())).multiply(across.length()));
                     player.sendMessage(ChatColor.YELLOW + "That game is full, but you can watch!");
                     player.teleport(mid.toLocation(court.getWorld()));
                 }
             }
         }
     }
-    
+
     @Command(aliases = {"start"},
             desc = "Start a match on specified court.",
             usage = "<court name>",
@@ -159,7 +159,7 @@ public class VolleyballCommand {
 
     @Command(aliases = {"testbound"}, desc = "Tells you if you're inside a court.")
     @CommandPermissions("vb.admin")
-    public static void testBound(CommandContext args, CommandSender sender){
+    public static void testBound(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             VManager manager = VolleyballPlugin.getInstance().getManager();
@@ -173,13 +173,13 @@ public class VolleyballCommand {
 
     @Command(aliases = {"romancandle", "rc"}, desc = "Launch a roman candle.")
     @CommandPermissions("vb.admin")
-    public static void romanCandle(CommandContext args, CommandSender sender){
+    public static void romanCandle(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             EffectManager effectManager = VolleyballPlugin.getInstance().getEffectManager();
             VManager manager = VolleyballPlugin.getInstance().getManager();
             Player player = (Player) sender;
             Color color;
-            if (manager.isInCourt(player)){
+            if (manager.isInCourt(player)) {
                 color = manager.getCourt(player).getSide(player.getLocation()) == Court.Team.RED ? Color.RED : Color.BLUE;
             } else {
                 color = Color.PURPLE;
@@ -267,7 +267,7 @@ public class VolleyballCommand {
 
         @Command(aliases = {"ballsize"},
                 desc = "Set the ball size for the court,",
-                usage = "<court name> <ballsize>",
+                usage = "<court name> <ball size>",
                 min = 1)
         public static void ballSize(CommandContext args, CommandSender sender) {
             VManager manager = VolleyballPlugin.getInstance().getManager();

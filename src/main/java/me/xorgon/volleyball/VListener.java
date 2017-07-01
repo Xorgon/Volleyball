@@ -85,6 +85,9 @@ public class VListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        if (!player.hasPermission("vb.user")) {
+            return;
+        }
         if (manager.isInCourt(player)) {
             Court court = manager.getCourt(player);
             if (court.isStarted()) {
@@ -136,18 +139,24 @@ public class VListener implements Listener {
                 }
             }
             if (!court.isStarting()) {
-                if (court.getDisplayName() != null) {
-                    Bukkit.broadcastMessage(ChatColor.YELLOW + "Volleyball game starting at the " + court.getDisplayName() +
-                            " court in " + Court.START_DELAY_SECS + " seconds!");
+
+                String alertMsg;
+                if (court.getDisplayName() != null ) {
+                    alertMsg = ChatColor.YELLOW + "Volleyball game starting at the " + court.getDisplayName() +
+                            " court in " + Court.START_DELAY_SECS + " seconds!";
                 } else {
-                    Bukkit.broadcastMessage(ChatColor.YELLOW + "Volleyball game starting in " + Court.START_DELAY_SECS + " seconds!");
+                    alertMsg = ChatColor.YELLOW + "Volleyball game starting in " + Court.START_DELAY_SECS + " seconds!";
                 }
+                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
+                        .forEach(p -> p.sendMessage(alertMsg));
+
                 FancyMessage joinMsg = new FancyMessage()
                         .color(ChatColor.LIGHT_PURPLE)
                         .text("Click here to join!")
                         .command("/vb join " + court.getName())
                         .tooltip(ChatColor.YELLOW + "Join the volleyball game.");
-                Bukkit.getOnlinePlayers().forEach(p -> joinMsg.send(p));
+                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
+                        .forEach(p -> joinMsg.send(p));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);
             }
