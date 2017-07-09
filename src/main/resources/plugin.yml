@@ -1,7 +1,7 @@
 name: ${artifactId}
 version: ${version}
 main: ${main.class}
-softdepend: [WorldEdit]
+depend: [WorldEdit]
 permissions:
   vb.admin:
     description: Allows administration of Volleyball
