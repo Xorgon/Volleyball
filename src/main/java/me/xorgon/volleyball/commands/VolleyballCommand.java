@@ -113,7 +113,12 @@ public class VolleyballCommand {
     public static void start(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             if (args.argsLength() == 0) {
-                VolleyballPlugin.getInstance().getManager().getCourt((Player) sender).startGame(true);
+                Court court = VolleyballPlugin.getInstance().getManager().getCourt((Player) sender);
+                if (court != null) {
+                    court.startGame(true);
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You are not within a court and you have not specified a court.");
+                }
             } else {
                 VolleyballPlugin.getInstance().getManager().getCourt(args.getString(0)).startGame(true);
             }
