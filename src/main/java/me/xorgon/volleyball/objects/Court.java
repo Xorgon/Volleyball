@@ -324,7 +324,7 @@ public class Court {
         }
     }
 
-    public void endGame() {
+    public void endGame(boolean serverShutdown) {
         removeBall();
         String message;
         if (getWinning() == Team.RED) {
@@ -338,7 +338,10 @@ public class Court {
 
         revertScoreboards();
 
-        fireworks(getWinning());
+        if (!serverShutdown) {
+            fireworks(getWinning());
+        }
+
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
         setRedScore(0);
@@ -346,6 +349,10 @@ public class Court {
         if (started) {
             started = false;
         }
+    }
+
+    public void endGame() {
+        endGame(false);
     }
 
     // Only use when messages and fireworks are otherwise handled (e.g. forfeits).
@@ -693,7 +700,7 @@ public class Court {
 
     public void resetCourt() {
         if (isStarted()) {
-            endGame();
+            endGame(true);
         } else {
             removeBall();
         }
