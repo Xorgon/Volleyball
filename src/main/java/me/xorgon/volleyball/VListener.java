@@ -155,7 +155,7 @@ public class VListener implements Listener {
                         .text("Click here to join!")
                         .command("/vb join " + court.getName())
                         .tooltip(ChatColor.YELLOW + "Join the volleyball game.");
-                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
+                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
                         .forEach(p -> joinMsg.send(p));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);

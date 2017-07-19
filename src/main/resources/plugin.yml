@@ -7,6 +7,9 @@ permissions:
     description: Allows administration of Volleyball
     default: op
   vb.user:
-    description: Allows the use of the '/vb help' command.
+    description: Allows the use of Volleyball courts, but not teleportation features.
+    default: true
+  vb.tp:
+    description: Allows the use of court teleportation features.
     default: true
 commands:

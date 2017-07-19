@@ -79,7 +79,7 @@ public class VolleyballCommand {
     }
 
     @Command(aliases = {"join"}, desc = "Join the specified volleyball court.", usage = "<court name> ", min = 1, max = 1)
-    @CommandPermissions("vb.user")
+    @CommandPermissions("vb.tp")
     public static void join(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
