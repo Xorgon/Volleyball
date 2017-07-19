@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.util.Vector;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,12 +86,23 @@ public class VListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (!player.hasPermission("vb.user")) {
-            return;
-        }
         if (manager.isInCourt(player)) {
             Court court = manager.getCourt(player);
-            if (court.isStarted()) {
+            if (court.isStarted() || !player.hasPermission("vb.user")) {
+                Vector centerToPlayer = player.getLocation().toVector().subtract(court.getCenter().toVector()).clone();
+                player.setVelocity(centerToPlayer.setY(0).normalize().setY(1));
+
+                if (!manager.isBouncedPlayer(player)) {
+                    if (!player.hasPermission("vb.user")) {
+                        player.sendMessage(ChatColor.RED + "You do not have permission to play volleyball.");
+                    } else {
+                        player.sendMessage(ChatColor.RED + "The match has already started!");
+                    }
+
+                    manager.addBouncedPlayer(player);
+
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> manager.removeBouncedPlayer(player), 100);
+                }
                 return;
             }
             FancyMessage helpMsg = new FancyMessage();
@@ -141,7 +153,7 @@ public class VListener implements Listener {
             if (!court.isStarting()) {
 
                 String alertMsg;
-                if (court.getDisplayName() != null ) {
+                if (court.getDisplayName() != null) {
                     alertMsg = ChatColor.YELLOW + "Volleyball game starting at the " + court.getDisplayName() +
                             " court in " + Court.START_DELAY_SECS + " seconds!";
                 } else {

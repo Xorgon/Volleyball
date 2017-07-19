@@ -9,8 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VManager {
@@ -21,6 +24,7 @@ public class VManager {
     private int ballCheckerID;
     private int minplayersCheckerID;
     private Config config;
+    private List<Player> bouncedPlayers = new ArrayList<>(); // List of players that have been bounced away from courts recently.
 
     public VManager() {
         ballCheckerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new BallChecker(this), 20L, 4L);
@@ -117,5 +121,19 @@ public class VManager {
 
     public Config getConfig() {
         return config;
+    }
+
+    public void addBouncedPlayer(Player player) {
+        bouncedPlayers.add(player);
+    }
+
+    public void removeBouncedPlayer(Player player) {
+        if (bouncedPlayers.contains(player)) {
+            bouncedPlayers.remove(player);
+        }
+    }
+
+    public boolean isBouncedPlayer(Player player) {
+        return bouncedPlayers.contains(player);
     }
 }

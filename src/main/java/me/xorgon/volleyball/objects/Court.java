@@ -310,6 +310,12 @@ public class Court {
         }
     }
 
+    public Location getCenter() {
+        Location redCenter = redMin.getMidpoint(redMax).add(new Vector(0, 2.25, 0)).toLocation(world);
+        Location blueCenter = blueMin.getMidpoint(blueMax).add(new Vector(0, 2.25, 0)).toLocation(world);
+        return redCenter.toVector().getMidpoint(blueCenter.toVector()).toLocation(world);
+    }
+
     public boolean isFinished() {
         return (redScore >= MAX_SCORE || blueScore >= MAX_SCORE);
     }
