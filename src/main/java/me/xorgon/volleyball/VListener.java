@@ -195,7 +195,9 @@ public class VListener implements Listener {
     @EventHandler
     public void onPlayerBreakBlock(BlockBreakEvent event) {
         // Cancel the event if player is playing.
-        event.setCancelled(manager.isPlaying(event.getPlayer()));
+        if (manager.isPlaying(event.getPlayer())){
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
