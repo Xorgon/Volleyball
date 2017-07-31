@@ -88,7 +88,8 @@ public class VListener implements Listener {
         Player player = event.getPlayer();
         if (manager.isInCourt(player)) {
             Court court = manager.getCourt(player);
-            if (court.isStarted() || !player.hasPermission("vb.user")) {
+            if (court.isStarted() && court.getTeam(player) == Court.Team.NONE
+                    || !player.hasPermission("vb.user")) {
                 Vector centerToPlayer = player.getLocation().toVector().subtract(court.getCenter().toVector()).clone();
                 player.setVelocity(centerToPlayer.setY(0).normalize().setY(1));
 
@@ -103,6 +104,9 @@ public class VListener implements Listener {
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> manager.removeBouncedPlayer(player), 100);
                 }
+                return;
+            }
+            if (court.isStarted()) {
                 return;
             }
             FancyMessage helpMsg = new FancyMessage();
