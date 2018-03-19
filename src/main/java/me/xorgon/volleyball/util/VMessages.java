@@ -73,7 +73,7 @@ public class VMessages {
         globalPlaceholders.put("court.startdelay", Court.START_DELAY_SECS);
 
         createMap();
-        replaceGlobalPlaceholders();
+        replaceAllPlaceholders();
     }
 
     private void createMap() {
@@ -108,7 +108,19 @@ public class VMessages {
         messages.put("click-to-join", clickToJoinDefault);
     }
 
-    private void replaceGlobalPlaceholders() {
+    public boolean hasMessageKey(String key) {
+        return messages.containsKey(key);
+    }
+
+    public void setMessage(String key, String message) {
+        messages.replace(key, replacePlaceholders(message));
+    }
+
+    public Map<String, String> getMessages() {
+        return messages;
+    }
+
+    private void replaceAllPlaceholders() {
         for (String messageKey : messages.keySet()) {
             messages.replace(messageKey, replacePlaceholders(messages.get(messageKey)));
         }

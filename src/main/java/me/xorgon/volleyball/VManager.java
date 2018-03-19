@@ -5,6 +5,7 @@ import me.xorgon.volleyball.schedulers.BallChecker;
 import me.xorgon.volleyball.schedulers.MinPlayersChecker;
 import me.xorgon.volleyball.schedulers.SetBallFacing;
 import me.xorgon.volleyball.util.CourtsConfig;
+import me.xorgon.volleyball.util.MessagesConfig;
 import me.xorgon.volleyball.util.VMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -24,6 +25,7 @@ public class VManager {
     private int ballCheckerID;
     private int minplayersCheckerID;
     private CourtsConfig courtsConfig;
+    private MessagesConfig messagesConfig;
     private List<Player> bouncedPlayers = new ArrayList<>(); // List of players that have been bounced away from courts recently.
     public VMessages messages;
 
@@ -34,6 +36,9 @@ public class VManager {
         minplayersCheckerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new MinPlayersChecker(this), 20L, 20L);
         courtsConfig = new CourtsConfig(this);
         courts = courtsConfig.load();
+
+        messagesConfig = new MessagesConfig(this);
+        messages = messagesConfig.load();
     }
 
     public Court addCourt(String name) {
@@ -89,7 +94,7 @@ public class VManager {
 
     public Court getPlayingIn(Player player) {
         for (Court court : courts.values()) {
-            if (court.getAllPlayers().contains(player)){
+            if (court.getAllPlayers().contains(player)) {
                 return court;
             }
         }
@@ -123,6 +128,10 @@ public class VManager {
 
     public CourtsConfig getCourtsConfig() {
         return courtsConfig;
+    }
+
+    public MessagesConfig getMessagesConfig() {
+        return messagesConfig;
     }
 
     public void addBouncedPlayer(Player player) {

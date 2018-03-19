@@ -41,6 +41,11 @@ public class MessagesConfig {
         }
 
         VMessages messages = new VMessages();
+        for (String key : messagesSec.getKeys(false)) {
+            if (messages.hasMessageKey(key)) {
+                messages.setMessage(key, messagesSec.getString(key));
+            }
+        }
         return messages;
     }
 
@@ -48,6 +53,11 @@ public class MessagesConfig {
         config = new YamlConfiguration();
 
         ConfigurationSection messagesSec = config.createSection("messages");
+
+        Map<String, String> messages = manager.messages.getMessages();
+        for (String key : messages.keySet()) {
+            messagesSec.set(key, messages.get(key));
+        }
 
         try {
             config.save(file);
