@@ -66,16 +66,7 @@ public class VolleyballCommand {
     @Command(aliases = {"help"}, desc = "Basic instructions on how to play volleyball.")
     @CommandPermissions("vb.user")
     public static void help(CommandContext args, CommandSender sender) {
-        sender.sendMessage(ChatColor.LIGHT_PURPLE + "How to play volleyball:");
-        sender.sendMessage(ChatColor.YELLOW + "Sprinting and jumping both increase the power of your shot.");
-        sender.sendMessage(ChatColor.YELLOW + "Use one, or both, to hit the ball as far as you want.");
-        sender.sendMessage(ChatColor.YELLOW + "It is recommended to just sprint for a serve.");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.YELLOW + "Teams take turns serving.");
-        sender.sendMessage(ChatColor.YELLOW + "Each time the ball goes over the net, a team has "
-                + ChatColor.LIGHT_PURPLE + Court.MAX_HITS + ChatColor.YELLOW + " shots to hit it back over.");
-        sender.sendMessage(ChatColor.YELLOW + "The first team to score "
-                + ChatColor.LIGHT_PURPLE + Court.MAX_SCORE + ChatColor.YELLOW + " points wins!");
+        sender.sendMessage(VolleyballPlugin.getInstance().getManager().messages.help);
     }
 
     @Command(aliases = {"join"}, desc = "Join the specified volleyball court.", usage = "<court name> ", min = 1, max = 1)
@@ -98,7 +89,7 @@ public class VolleyballCommand {
                     Vector mid = redVec.midpoint(blueVec);
                     Vector across = redVec.clone().subtract(blueVec);
                     mid.add(new Vector(0, 1, 0).crossProduct(across.clone().multiply(1 / across.length())).multiply(across.length()));
-                    player.sendMessage(ChatColor.YELLOW + "That game is full, but you can watch!");
+                    player.sendMessage(manager.messages.fullGame);
                     player.teleport(mid.toLocation(court.getWorld()));
                 }
             }

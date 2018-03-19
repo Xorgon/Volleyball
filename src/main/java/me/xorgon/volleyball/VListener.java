@@ -37,12 +37,12 @@ public class VListener implements Listener {
                 if (court.canHit()) {
                     Court.Team ballSide = court.getSide(ball.getLocation());
                     if (ballSide != court.getTeam(player) && ballSide != Court.Team.NONE) {
-                        player.sendMessage(ChatColor.YELLOW + "You can't hit the ball while it's on the opponents' side!");
+                        player.sendMessage(manager.messages.wrongSide);
                         return;
                     }
                     if (court.getLastHitBy() == court.getTeam(player)) {
                         if (court.getHitCount() >= Court.MAX_HITS) {
-                            player.sendMessage(ChatColor.YELLOW + "Your team has already hit it " + court.getHitCount() + " times!");
+                            player.sendMessage(manager.messages.tooManyHits);
                             return;
                         }
                     } else {
@@ -95,9 +95,9 @@ public class VListener implements Listener {
 
                 if (!manager.isBouncedPlayer(player)) {
                     if (!player.hasPermission("vb.user")) {
-                        player.sendMessage(ChatColor.RED + "You do not have permission to play volleyball.");
+                        player.sendMessage(manager.messages.noPermissions);
                     } else {
-                        player.sendMessage(ChatColor.RED + "The match has already started!");
+                        player.sendMessage(manager.messages.matchStarted);
                     }
 
                     manager.addBouncedPlayer(player);
@@ -110,14 +110,10 @@ public class VListener implements Listener {
                 return;
             }
             FancyMessage helpMsg = new FancyMessage();
-            String helpTooltip = ChatColor.YELLOW + "Click here to learn how to play volleyball!";
-            helpMsg.color(ChatColor.LIGHT_PURPLE)
-                    .text("Click here")
+            String help = manager.messages.clickForHelp;
+            helpMsg.text(help)
                     .command("/vb help")
-                    .tooltip(helpTooltip)
-                    .then()
-                    .color(ChatColor.YELLOW)
-                    .text(" for help!")
+                    .tooltip(help)
                     .then();
             if (court.getSide(player.getLocation()) == Court.Team.RED) {
                 if (court.getRedPlayers().size() < court.getMaxTeamSize()) {
@@ -126,13 +122,13 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.RED);
-                        FancyMessage msg = new FancyMessage(ChatColor.YELLOW + "You have joined " + ChatColor.RED + "red " + ChatColor.YELLOW + "team! ");
-                        msg.append(helpMsg);
+                        FancyMessage msg = new FancyMessage(manager.messages.getJoinedTeamMessage(Court.Team.RED));
                         msg.send(player);
+                        helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
-                        player.sendMessage(ChatColor.RED + "Red " + ChatColor.YELLOW + "team is full.");
+                        player.sendMessage(manager.messages.getFullTeamMessage(Court.Team.RED));
                         teamFullSent.add(player);
                     }
                 }
@@ -143,13 +139,13 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.BLUE);
-                        FancyMessage msg = new FancyMessage(ChatColor.YELLOW + "You have joined " + ChatColor.BLUE + "blue " + ChatColor.YELLOW + "team! ");
-                        msg.append(helpMsg);
+                        FancyMessage msg = new FancyMessage(manager.messages.getJoinedTeamMessage(Court.Team.BLUE));
                         msg.send(player);
+                        helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
-                        player.sendMessage(ChatColor.BLUE + "Blue " + ChatColor.YELLOW + "team is full.");
+                        player.sendMessage(manager.messages.getFullTeamMessage(Court.Team.BLUE));
                         teamFullSent.add(player);
                     }
                 }
@@ -158,19 +154,17 @@ public class VListener implements Listener {
 
                 String alertMsg;
                 if (court.getDisplayName() != null) {
-                    alertMsg = ChatColor.YELLOW + "Volleyball game starting at the " + court.getDisplayName() +
-                            " court in " + Court.START_DELAY_SECS + " seconds!";
+                    alertMsg = manager.messages.getMatchStartingWithNameMessage(court);
                 } else {
-                    alertMsg = ChatColor.YELLOW + "Volleyball game starting in " + Court.START_DELAY_SECS + " seconds!";
+                    alertMsg = manager.messages.matchStartingWithoutName;
                 }
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
                         .forEach(p -> p.sendMessage(alertMsg));
 
                 FancyMessage joinMsg = new FancyMessage()
-                        .color(ChatColor.LIGHT_PURPLE)
-                        .text("Click here to join!")
+                        .text(manager.messages.clickToJoin)
                         .command("/vb join " + court.getName())
-                        .tooltip(ChatColor.YELLOW + "Join the volleyball game.");
+                        .tooltip(manager.messages.clickToJoin);
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
                         .forEach(p -> joinMsg.send(p));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
@@ -179,7 +173,7 @@ public class VListener implements Listener {
         } else if (manager.isPlaying(player)) {
             Court court = manager.getPlayingIn(player);
             if (!court.isStarted()) {
-                player.sendMessage(ChatColor.YELLOW + "You have left the game.");
+                player.sendMessage(manager.messages.leftGame);
                 court.removePlayer(player);
             }
         } else if (teamFullSent.contains(player)) {

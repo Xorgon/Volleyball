@@ -1,6 +1,7 @@
 package me.xorgon.volleyball.objects;
 
 import de.slikey.effectlib.EffectManager;
+import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
 import me.xorgon.volleyball.effects.BallLandEffect;
 import me.xorgon.volleyball.effects.BallTrailEffect;
@@ -23,6 +24,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class Court {
+
+    private VManager manager;
 
     private String name;
     private String displayName;
@@ -70,10 +73,12 @@ public class Court {
 
     private NearbyPlayersChecker nearbyChecker;
 
-    public Court(String name) {
+    public Court(String name, VManager manager) {
         this.name = name;
         started = false;
         initialized = false;
+
+        this.manager = manager;
 
         scoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getNewScoreboard();
         scoreboard.registerNewTeam("red").setPrefix(ChatColor.RED + "");
@@ -332,15 +337,7 @@ public class Court {
 
     public void endGame(boolean serverShutdown) {
         removeBall();
-        String message;
-        if (getWinning() == Team.RED) {
-            message = ChatColor.RED + "Red team wins! Congratulations.";
-        } else if (getWinning() == Team.BLUE) {
-            message = ChatColor.BLUE + "Blue team wins! Congratulations.";
-        } else {
-            message = ChatColor.YELLOW + "It's a draw!";
-        }
-        sendNearbyPlayersMessage(message);
+        sendNearbyPlayersMessage(manager.messages.getWinMessage(getWinning()));
 
         revertScoreboards();
 
@@ -417,17 +414,20 @@ public class Court {
 
         getAllPlayers().stream().filter(p -> !isInCourt(p.getLocation())).forEach(p -> {
             removePlayer(p);
-            p.sendMessage(ChatColor.YELLOW + "You left the court before the game started.");
+            p.sendMessage(manager.messages.gameLeaveBeforeStart);
         });
 
         if (!hasEnoughPlayers() && !force) {
-            sendAllPlayersMessage(ChatColor.YELLOW + "Not enough players to start.");
+            sendAllPlayersMessage(manager.messages.notEnoughPlayers);
             starting = false;
             return;
         }
 
-        sendRedPlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.RED + "red" + ChatColor.YELLOW + " team.");
-        sendBluePlayersMessage(ChatColor.YELLOW + "Game started, you're on " + ChatColor.BLUE + "blue" + ChatColor.YELLOW + " team.");
+        if (manager == null) {
+            System.out.println("MANAGER IS NUUUULLL");
+        }
+        sendRedPlayersMessage(manager.messages.getGameStartMessage(Team.RED));
+        sendBluePlayersMessage(manager.messages.getGameStartMessage(Team.BLUE));
 
         setScoreboards(getNearbyPlayers());
 
@@ -534,19 +534,18 @@ public class Court {
 
         hitCount = 0;
 
-        String message = (scoringTeam == Court.Team.RED ? ChatColor.RED + "Red " : ChatColor.BLUE + "Blue ")
-                + ChatColor.YELLOW + "team scored!";
+        String message = manager.messages.getScoredMessage(scoringTeam);
 
         getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
 
         boolean redMP = getRedScore() == Court.MAX_SCORE - 1 && getBlueScore() < MAX_SCORE;
         boolean blueMP = getBlueScore() == Court.MAX_SCORE - 1 && getRedScore() < MAX_SCORE;
         if (redMP && blueMP) {
-            sendNearbyPlayersMessage(ChatColor.YELLOW + "Double match point!");
+            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.NONE));
         } else if (redMP) {
-            sendNearbyPlayersMessage(ChatColor.RED + "Red " + ChatColor.YELLOW + "match point!");
+            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.RED));
         } else if (blueMP) {
-            sendNearbyPlayersMessage(ChatColor.BLUE + "Blue " + ChatColor.YELLOW + "match point!");
+            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.BLUE));
         }
 
         BallLandEffect effect = new BallLandEffect(VolleyballPlugin.getInstance().getEffectManager(), this, scoringTeam);

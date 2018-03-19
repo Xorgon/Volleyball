@@ -26,7 +26,7 @@ public class MinPlayersChecker implements Runnable {
 
     @Override
     public void run() {
-        String ffMessage = ChatColor.RED + "You will leave the game if you don't return to the court!";
+        String ffMessage = manager.messages.leaveGameThreat;
         for (Court court : manager.getCourts().values()) {
             if (court.isStarted()) {
                 for (Player player : court.getAllPlayers()) {
@@ -45,7 +45,7 @@ public class MinPlayersChecker implements Runnable {
                     } else {
                         if (warnedPlayers.containsKey(player)) {
                             if (warnedPlayers.get(player)) {
-                                player.sendMessage(ChatColor.YELLOW + "Welcome back.");
+                                player.sendMessage(manager.messages.returnToCourt);
                             }
                             warnedPlayers.remove(player);
                         }
@@ -77,7 +77,7 @@ public class MinPlayersChecker implements Runnable {
             if (!court.isInCourt(player.getLocation()) && warnedPlayers.containsKey(player)) {
                 Court.Team team = court.getTeam(player);
                 court.removePlayer(player);
-                player.sendMessage(ChatColor.RED + "You have left the volleyball game.");
+                player.sendMessage(manager.messages.leftGame);
                 if (!court.hasEnoughPlayers()){
                     int redSize = court.getRedPlayers().size();
                     int blueSize = court.getBluePlayers().size();
@@ -86,15 +86,13 @@ public class MinPlayersChecker implements Runnable {
                     Court.Team winner = Court.Team.NONE;
 
                     if (redSize < minSize && blueSize < minSize){
-                        court.sendAllPlayersMessage(ChatColor.YELLOW + "Both teams forfeit.");
                         winner = Court.Team.NONE;
                     } else if (redSize < minSize){
-                        court.sendAllPlayersMessage(ChatColor.RED + "Red " + ChatColor.YELLOW + "has too few players and so forfeits.");
                         winner = Court.Team.BLUE;
                     } else if (blueSize < minSize){
-                        court.sendAllPlayersMessage(ChatColor.BLUE + "Blue " + ChatColor.YELLOW + "has too few players and so forfeits.");
                         winner = Court.Team.RED;
                     }
+                    court.sendAllPlayersMessage(manager.messages.getForfeitMessage(team));
 
                     court.endGame(winner);
                 }
