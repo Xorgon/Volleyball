@@ -159,6 +159,7 @@ public class VListener implements Listener {
                     alertMsg = manager.messages.matchStartingWithoutName;
                 }
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
+                        .filter(p -> !manager.isPlaying(p) && !manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
                         .forEach(p -> p.sendMessage(alertMsg));
 
                 FancyMessage joinMsg = new FancyMessage()
@@ -166,6 +167,7 @@ public class VListener implements Listener {
                         .command("/vb join " + court.getName())
                         .tooltip(manager.messages.clickToJoin);
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
+                        .filter(p -> !manager.isPlaying(p) && manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
                         .forEach(p -> joinMsg.send(p));
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);
