@@ -35,7 +35,9 @@ public class MinPlayersChecker implements Runnable {
                             warnedPlayers.put(player, false);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getPlugin(), () -> {
                                 if (!court.isInCourt(player.getLocation())) {
-                                    player.sendMessage(ffMessage);
+                                    if (!ffMessage.isEmpty()) {
+                                        player.sendMessage(ffMessage);
+                                    }
                                     warnedPlayers.remove(player);
                                     warnedPlayers.put(player, true);
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getPlugin(), new PlayerLeaveScheduler(court, player), 100);
@@ -45,7 +47,10 @@ public class MinPlayersChecker implements Runnable {
                     } else {
                         if (warnedPlayers.containsKey(player)) {
                             if (warnedPlayers.get(player)) {
-                                player.sendMessage(manager.messages.getReturnToCourtMessage());
+                                String returnToCourtMessage = manager.messages.getReturnToCourtMessage();
+                                if (!returnToCourtMessage.isEmpty()) {
+                                    player.sendMessage(returnToCourtMessage);
+                                }
                             }
                             warnedPlayers.remove(player);
                         }
@@ -55,8 +60,8 @@ public class MinPlayersChecker implements Runnable {
         }
     }
 
-    public void removeWarnedPlayer(Player player){
-        if (warnedPlayers.containsKey(player)){
+    public void removeWarnedPlayer(Player player) {
+        if (warnedPlayers.containsKey(player)) {
             warnedPlayers.remove(player);
         }
     }
@@ -77,22 +82,28 @@ public class MinPlayersChecker implements Runnable {
             if (!court.isInCourt(player.getLocation()) && warnedPlayers.containsKey(player)) {
                 Court.Team team = court.getTeam(player);
                 court.removePlayer(player);
-                player.sendMessage(manager.messages.getLeftGameMessage());
-                if (!court.hasEnoughPlayers()){
+                String leftGameMessage = manager.messages.getLeftGameMessage();
+                if (!leftGameMessage.isEmpty()) {
+                    player.sendMessage(leftGameMessage);
+                }
+                if (!court.hasEnoughPlayers()) {
                     int redSize = court.getRedPlayers().size();
                     int blueSize = court.getBluePlayers().size();
                     int minSize = court.getMinTeamSize();
 
                     Court.Team winner = Court.Team.NONE;
 
-                    if (redSize < minSize && blueSize < minSize){
+                    if (redSize < minSize && blueSize < minSize) {
                         winner = Court.Team.NONE;
-                    } else if (redSize < minSize){
+                    } else if (redSize < minSize) {
                         winner = Court.Team.BLUE;
-                    } else if (blueSize < minSize){
+                    } else if (blueSize < minSize) {
                         winner = Court.Team.RED;
                     }
-                    court.sendAllPlayersMessage(manager.messages.getForfeitMessage(team));
+                    String forfeitMessage = manager.messages.getForfeitMessage(team);
+                    if (!forfeitMessage.isEmpty()) {
+                        court.sendAllPlayersMessage(forfeitMessage);
+                    }
 
                     court.endGame(winner);
                 }

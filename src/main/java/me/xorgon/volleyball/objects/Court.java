@@ -337,7 +337,10 @@ public class Court {
 
     public void endGame(boolean serverShutdown) {
         removeBall();
-        sendNearbyPlayersMessage(manager.messages.getWinMessage(getWinning()));
+        String winMessage = manager.messages.getWinMessage(getWinning());
+        if (!winMessage.isEmpty()) {
+            sendNearbyPlayersMessage(winMessage);
+        }
 
         revertScoreboards();
 
@@ -414,17 +417,29 @@ public class Court {
 
         getAllPlayers().stream().filter(p -> !isInCourt(p.getLocation())).forEach(p -> {
             removePlayer(p);
-            p.sendMessage(manager.messages.getGameLeaveBeforeStartMessage());
+            String gameLeaveBeforeStartMessage = manager.messages.getGameLeaveBeforeStartMessage();
+            if (!gameLeaveBeforeStartMessage.isEmpty()) {
+                p.sendMessage(gameLeaveBeforeStartMessage);
+            }
         });
 
         if (!hasEnoughPlayers() && !force) {
-            sendAllPlayersMessage(manager.messages.getNotEnoughPlayersMessage());
+            String notEnoughPlayersMessage = manager.messages.getNotEnoughPlayersMessage();
+            if (!notEnoughPlayersMessage.isEmpty()) {
+                sendAllPlayersMessage(notEnoughPlayersMessage);
+            }
             starting = false;
             return;
         }
 
-        sendRedPlayersMessage(manager.messages.getGameStartMessage(Team.RED));
-        sendBluePlayersMessage(manager.messages.getGameStartMessage(Team.BLUE));
+        String gameStartMessageRed = manager.messages.getGameStartMessage(Team.RED);
+        if (!gameStartMessageRed.isEmpty()) {
+            sendRedPlayersMessage(gameStartMessageRed);
+        }
+        String gameStartMessageBlue = manager.messages.getGameStartMessage(Team.BLUE);
+        if (!gameStartMessageBlue.isEmpty()) {
+            sendBluePlayersMessage(gameStartMessageBlue);
+        }
 
         setScoreboards(getNearbyPlayers());
 
@@ -533,16 +548,20 @@ public class Court {
 
         String message = manager.messages.getScoredMessage(scoringTeam);
 
-        getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
+        if (!message.isEmpty()) {
+            getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
+        }
 
         boolean redMP = getRedScore() == Court.MAX_SCORE - 1 && getBlueScore() < MAX_SCORE;
         boolean blueMP = getBlueScore() == Court.MAX_SCORE - 1 && getRedScore() < MAX_SCORE;
-        if (redMP && blueMP) {
-            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.NONE));
-        } else if (redMP) {
-            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.RED));
-        } else if (blueMP) {
-            sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.BLUE));
+        if (!manager.messages.getMatchPointMessage(Team.NONE).isEmpty()) { // If this is empty, all will be empty.
+            if (redMP && blueMP) {
+                sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.NONE));
+            } else if (redMP) {
+                sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.RED));
+            } else if (blueMP) {
+                sendNearbyPlayersMessage(manager.messages.getMatchPointMessage(Team.BLUE));
+            }
         }
 
         BallLandEffect effect = new BallLandEffect(VolleyballPlugin.getInstance().getEffectManager(), this, scoringTeam);

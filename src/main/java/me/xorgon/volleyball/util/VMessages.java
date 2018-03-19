@@ -143,6 +143,9 @@ public class VMessages {
         return teamName;
     }
 
+
+    // Message getters.
+
     public String getHelpMessage() {
         return messages.get("help");
     }

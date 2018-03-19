@@ -35,34 +35,47 @@ public class MessagesConfig {
 
         config = YamlConfiguration.loadConfiguration(file);
 
-        ConfigurationSection messagesSec = config.getConfigurationSection("messages");
-        if (messagesSec == null) {
-            return new VMessages();
-        }
-
         VMessages messages = new VMessages();
-        for (String key : messagesSec.getKeys(false)) {
-            if (messages.hasMessageKey(key)) {
-                messages.setMessage(key, messagesSec.getString(key));
+        ConfigurationSection messagesSec = config.getConfigurationSection("messages");
+
+        if (messagesSec == null) {
+            for (String key : messages.getMessages().keySet()) {
+                messages.setMessage(key, "");
+            }
+        } else {
+            for (String key : messagesSec.getKeys(false)) {
+                if (messages.hasMessageKey(key)) {
+                    messages.setMessage(key, messagesSec.getString(key));
+                }
+            }
+            for (String key : messages.getMessages().keySet()) {
+                if (!messagesSec.contains(key)) {
+                    messages.setMessage(key, "");
+                }
             }
         }
+
         return messages;
     }
 
     public void save() {
-        config = new YamlConfiguration();
+        if (!file.exists()) { // Don't overwrite config file.
+            config = new YamlConfiguration();
 
-        ConfigurationSection messagesSec = config.createSection("messages");
+            ConfigurationSection messagesSec = config.createSection("messages");
 
-        Map<String, String> messages = manager.messages.getMessages();
-        for (String key : messages.keySet()) {
-            messagesSec.set(key, messages.get(key));
-        }
+            Map<String, String> messages = (new VMessages()).getMessages();
+            for (String key : messages.keySet()) {
+                if (!messages.get(key).isEmpty()) {
+                    messagesSec.set(key, messages.get(key));
+                }
+            }
 
-        try {
-            config.save(file);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+            try {
+                config.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }

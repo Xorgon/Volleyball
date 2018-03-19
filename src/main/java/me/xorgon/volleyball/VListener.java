@@ -35,12 +35,18 @@ public class VListener implements Listener {
                 if (court.canHit()) {
                     Court.Team ballSide = court.getSide(ball.getLocation());
                     if (ballSide != court.getTeam(player) && ballSide != Court.Team.NONE) {
-                        player.sendMessage(manager.messages.getWrongSideMessage());
+                        String wrongSideMessage = manager.messages.getWrongSideMessage();
+                        if (!wrongSideMessage.isEmpty()) {
+                            player.sendMessage(wrongSideMessage);
+                        }
                         return;
                     }
                     if (court.getLastHitBy() == court.getTeam(player)) {
                         if (court.getHitCount() >= Court.MAX_HITS) {
-                            player.sendMessage(manager.messages.getTooManyHitsMessage());
+                            String tooManyHitsMessage = manager.messages.getTooManyHitsMessage();
+                            if (!tooManyHitsMessage.isEmpty()) {
+                                player.sendMessage(tooManyHitsMessage);
+                            }
                             return;
                         }
                     } else {
@@ -93,9 +99,11 @@ public class VListener implements Listener {
 
                 if (!manager.isBouncedPlayer(player)) {
                     if (!player.hasPermission("vb.user")) {
-                        player.sendMessage(manager.messages.getNoPermissionsMessage());
+                        String noPermissionsMessage = manager.messages.getNoPermissionsMessage();
+                        if (!noPermissionsMessage.isEmpty()) player.sendMessage(noPermissionsMessage);
                     } else {
-                        player.sendMessage(manager.messages.getMatchStartedMessage());
+                        String matchStartedMessage = manager.messages.getMatchStartedMessage();
+                        if (!matchStartedMessage.isEmpty()) player.sendMessage(matchStartedMessage);
                     }
 
                     manager.addBouncedPlayer(player);
@@ -120,13 +128,15 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.RED);
-                        FancyMessage msg = new FancyMessage(manager.messages.getJoinedTeamMessage(Court.Team.RED));
-                        msg.send(player);
-                        helpMsg.send(player);
+                        String joinedTeamMessage = manager.messages.getJoinedTeamMessage(Court.Team.RED);
+                        FancyMessage msg = new FancyMessage(joinedTeamMessage);
+                        if (!joinedTeamMessage.isEmpty()) msg.send(player);
+                        if (!help.isEmpty()) helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
-                        player.sendMessage(manager.messages.getFullTeamMessage(Court.Team.RED));
+                        String fullTeamMessage = manager.messages.getFullTeamMessage(Court.Team.RED);
+                        if (!fullTeamMessage.isEmpty()) player.sendMessage(fullTeamMessage);
                         teamFullSent.add(player);
                     }
                 }
@@ -137,13 +147,15 @@ public class VListener implements Listener {
                             court.removePlayer(player);
                         }
                         court.addPlayer(player, Court.Team.BLUE);
-                        FancyMessage msg = new FancyMessage(manager.messages.getJoinedTeamMessage(Court.Team.BLUE));
-                        msg.send(player);
-                        helpMsg.send(player);
+                        String joinedTeamMessage = manager.messages.getJoinedTeamMessage(Court.Team.BLUE);
+                        FancyMessage msg = new FancyMessage(joinedTeamMessage);
+                        if (!joinedTeamMessage.isEmpty()) msg.send(player);
+                        if (!help.isEmpty()) helpMsg.send(player);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
-                        player.sendMessage(manager.messages.getFullTeamMessage(Court.Team.BLUE));
+                        String fullTeamMessage = manager.messages.getFullTeamMessage(Court.Team.BLUE);
+                        if (!fullTeamMessage.isEmpty()) player.sendMessage(fullTeamMessage);
                         teamFullSent.add(player);
                     }
                 }
@@ -156,24 +168,32 @@ public class VListener implements Listener {
                 } else {
                     alertMsg = manager.messages.getMatchStartingWithoutNameMessage();
                 }
-                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
-                        .filter(p -> !manager.isPlaying(p) && !manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
-                        .forEach(p -> p.sendMessage(alertMsg));
+                if (!alertMsg.isEmpty()) {
+                    Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
+                            .filter(p -> !manager.isPlaying(p) && !manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
+                            .forEach(p -> p.sendMessage(alertMsg));
+                }
 
-                FancyMessage joinMsg = new FancyMessage()
-                        .text(manager.messages.getClickToJoinMessage())
-                        .command("/vb join " + court.getName())
-                        .tooltip(manager.messages.getClickToJoinMessage());
-                Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
-                        .filter(p -> !manager.isPlaying(p) && manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
-                        .forEach(p -> joinMsg.send(p));
+                String clickToJoinMessage = manager.messages.getClickToJoinMessage();
+                if (!clickToJoinMessage.isEmpty()) {
+                    FancyMessage joinMsg = new FancyMessage()
+                            .text(clickToJoinMessage)
+                            .command("/vb join " + court.getName())
+                            .tooltip(clickToJoinMessage);
+                    Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
+                            .filter(p -> !manager.isPlaying(p) && manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
+                            .forEach(p -> joinMsg.send(p));
+                }
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);
             }
         } else if (manager.isPlaying(player)) {
             Court court = manager.getPlayingIn(player);
             if (!court.isStarted()) {
-                player.sendMessage(manager.messages.getLeftGameMessage());
+                String leftGameMessage = manager.messages.getLeftGameMessage();
+                if (!leftGameMessage.isEmpty()) {
+                    player.sendMessage(leftGameMessage);
+                }
                 court.removePlayer(player);
             }
         } else if (teamFullSent.contains(player)) {
