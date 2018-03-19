@@ -26,7 +26,7 @@ public class MinPlayersChecker implements Runnable {
 
     @Override
     public void run() {
-        String ffMessage = manager.messages.leaveGameThreat;
+        String ffMessage = manager.messages.getLeaveGameThreatMessage();
         for (Court court : manager.getCourts().values()) {
             if (court.isStarted()) {
                 for (Player player : court.getAllPlayers()) {
@@ -45,7 +45,7 @@ public class MinPlayersChecker implements Runnable {
                     } else {
                         if (warnedPlayers.containsKey(player)) {
                             if (warnedPlayers.get(player)) {
-                                player.sendMessage(manager.messages.returnToCourt);
+                                player.sendMessage(manager.messages.getReturnToCourtMessage());
                             }
                             warnedPlayers.remove(player);
                         }
@@ -77,7 +77,7 @@ public class MinPlayersChecker implements Runnable {
             if (!court.isInCourt(player.getLocation()) && warnedPlayers.containsKey(player)) {
                 Court.Team team = court.getTeam(player);
                 court.removePlayer(player);
-                player.sendMessage(manager.messages.leftGame);
+                player.sendMessage(manager.messages.getLeftGameMessage());
                 if (!court.hasEnoughPlayers()){
                     int redSize = court.getRedPlayers().size();
                     int blueSize = court.getBluePlayers().size();

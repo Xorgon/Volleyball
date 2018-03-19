@@ -414,11 +414,11 @@ public class Court {
 
         getAllPlayers().stream().filter(p -> !isInCourt(p.getLocation())).forEach(p -> {
             removePlayer(p);
-            p.sendMessage(manager.messages.gameLeaveBeforeStart);
+            p.sendMessage(manager.messages.getGameLeaveBeforeStartMessage());
         });
 
         if (!hasEnoughPlayers() && !force) {
-            sendAllPlayersMessage(manager.messages.notEnoughPlayers);
+            sendAllPlayersMessage(manager.messages.getNotEnoughPlayersMessage());
             starting = false;
             return;
         }

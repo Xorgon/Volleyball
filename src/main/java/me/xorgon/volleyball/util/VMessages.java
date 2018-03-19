@@ -7,35 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VMessages {
-    public String help;
-    public String fullGame;
-    private String winMessage;
-    public String gameLeaveBeforeStart;
-    public String notEnoughPlayers;
-    private String gameStart;
-    private String scored;
-    private String matchPoint;
+    private Map<String, String> messages;
 
-    // MinPlayersChecker
-    public String leaveGameThreat;
-    public String returnToCourt;
-    public String leftGame;
-    private String teamForfeit;
-    public String doubleForfeit;
-
-    // VListener
-    public String wrongSide;
-    public String tooManyHits;
-    public String clickForHelp;
-    public String noPermissions;
-    public String matchStarted;
-    private String joinedTeam;
-    private String fullTeam;
-    private String matchStartingWithName;
-    public String matchStartingWithoutName;
-    public String clickToJoin;
-
-    private Map<String, Integer> replacements = new HashMap<>();
+    private Map<String, Integer> globalPlaceholders = new HashMap<>();
 
     private String helpDefault = "§dHow to play volleyball:\n"
             + "§eSprinting and jumping both increase the power of your shot.\n"
@@ -50,6 +24,8 @@ public class VMessages {
     private String fullGameDefault = "§eThat game is full, but you can watch!";
 
     private String winMessageDefault = "{teamname} team wins! Congratulations.";
+
+    private String drawMessageDefault = "§eIt's a draw!";
 
     private String gameLeaveBeforeStartDefault = "§eYou left the court before the game started.";
 
@@ -92,89 +68,57 @@ public class VMessages {
     private String clickToJoinDefault = "§dClick here to join the game!";
 
     public VMessages() {
-        replacements.put("court.maxscore", Court.MAX_SCORE);
-        replacements.put("court.maxhits", Court.MAX_HITS);
-        replacements.put("court.startdelay", Court.START_DELAY_SECS);
+        globalPlaceholders.put("court.maxscore", Court.MAX_SCORE);
+        globalPlaceholders.put("court.maxhits", Court.MAX_HITS);
+        globalPlaceholders.put("court.startdelay", Court.START_DELAY_SECS);
 
-        loadMessages();
+        createMap();
+        replaceGlobalPlaceholders();
     }
 
-    private void loadMessages() {
-        help = replacePlaceholders(helpDefault);
-        fullGame = replacePlaceholders(fullGameDefault);
-        tooManyHits = replacePlaceholders(tooManyHitsDefault);
-        winMessage = winMessageDefault;
-        gameLeaveBeforeStart = gameLeaveBeforeStartDefault;
-        notEnoughPlayers = notEnoughPlayersDefault;
-        gameStart = gameStartDefault;
-        scored = scoredDefault;
-        matchPoint = matchPointDefault;
-        leaveGameThreat = leaveGameThreatDefault;
-        returnToCourt = returnToCourtDefault;
-        leftGame = leftGameDefault;
-        teamForfeit = teamForfeitDefault;
-        doubleForfeit = doubleForfeitDefault;
-        wrongSide = wrongSideDefault;
-        clickForHelp = clickForHelpDefault;
-        noPermissions = noPermissionsDefault;
-        matchStarted = matchStartedDefault;
-        joinedTeam = joinedTeamDefault;
-        fullTeam = fullTeamDefault;
-        matchStartingWithName = replacePlaceholders(matchStartingWithNameDefault);
-        matchStartingWithoutName = replacePlaceholders(matchStartingWithoutNameDefault);
-        clickToJoin = clickToJoinDefault;
+    private void createMap() {
+        messages = new HashMap<>();
+        messages.put("help", helpDefault);
+        messages.put("full-game", fullGameDefault);
+        messages.put("win-message", winMessageDefault);
+        messages.put("draw-message", drawMessageDefault);
+        messages.put("game-leave-before-start", gameLeaveBeforeStartDefault);
+        messages.put("not-enough-players", notEnoughPlayersDefault);
+        messages.put("game-start", gameStartDefault);
+        messages.put("scored", scoredDefault);
+        messages.put("match-point", matchPointDefault);
+
+        // MinPlayersChecker
+        messages.put("leave-game-threat", leaveGameThreatDefault);
+        messages.put("return-to-court", returnToCourtDefault);
+        messages.put("left-game", leftGameDefault);
+        messages.put("team-forfeit", teamForfeitDefault);
+        messages.put("double-forfeit", doubleForfeitDefault);
+
+        // VListener
+        messages.put("wrong-side", wrongSideDefault);
+        messages.put("too-many-hits", tooManyHitsDefault);
+        messages.put("click-for-help", clickForHelpDefault);
+        messages.put("no-permissions", noPermissionsDefault);
+        messages.put("match-started", matchStartedDefault);
+        messages.put("joined-team", joinedTeamDefault);
+        messages.put("full-team", fullTeamDefault);
+        messages.put("match-starting-with-name", matchStartingWithNameDefault);
+        messages.put("match-starting-without-name", matchStartingWithoutNameDefault);
+        messages.put("click-to-join", clickToJoinDefault);
+    }
+
+    private void replaceGlobalPlaceholders() {
+        for (String messageKey : messages.keySet()) {
+            messages.replace(messageKey, replacePlaceholders(messages.get(messageKey)));
+        }
     }
 
     private String replacePlaceholders(String message) {
-        for (String replacement : replacements.keySet()) {
-            message = message.replaceAll("\\{" + replacement + "}", replacements.get(replacement).toString());
+        for (String replacement : globalPlaceholders.keySet()) {
+            message = message.replaceAll("\\{" + replacement + "}", globalPlaceholders.get(replacement).toString());
         }
         return message;
-    }
-
-    public String getWinMessage(Court.Team team) {
-        String teamName = getTeamName(team);
-        if (team == Court.Team.NONE) {
-            return ChatColor.YELLOW + "It's a draw!";
-        } else {
-            return winMessage.replaceAll("\\{teamname}", teamName);
-        }
-    }
-
-    public String getGameStartMessage(Court.Team team) {
-        return gameStart.replaceAll("\\{teamname}", getTeamName(team));
-    }
-
-    public String getScoredMessage(Court.Team team) {
-        return scored.replaceAll("\\{teamname}", getTeamName(team));
-    }
-
-    public String getMatchPointMessage(Court.Team team) {
-        String teamName = getTeamName(team);
-        if (teamName.equals("")) {
-            teamName = "§eDouble";
-        }
-        return matchPoint.replaceAll("\\{teamname}", teamName);
-    }
-
-    public String getForfeitMessage(Court.Team team) {
-        if (team == Court.Team.NONE) {
-            return doubleForfeit;
-        } else {
-            return teamForfeit.replaceAll("\\{teamname}", getTeamName(team));
-        }
-    }
-
-    public String getJoinedTeamMessage(Court.Team team) {
-        return joinedTeam.replaceAll("\\{teamname}", getTeamName(team));
-    }
-
-    public String getFullTeamMessage(Court.Team team) {
-        return fullTeam.replaceAll("\\{teamname}", getTeamName(team));
-    }
-
-    public String getMatchStartingWithNameMessage(Court court) {
-        return matchStartingWithName.replaceAll("\\{court.name}", court.getDisplayName());
     }
 
     private String getTeamName(Court.Team team) {
@@ -185,5 +129,106 @@ public class VMessages {
             teamName = ChatColor.BLUE + "Blue";
         }
         return teamName;
+    }
+
+    public String getHelpMessage() {
+        return messages.get("help");
+    }
+
+    public String getFullGameMessage() {
+        return messages.get("full-game");
+    }
+
+    public String getWinMessage(Court.Team team) {
+        String teamName = getTeamName(team);
+        if (team == Court.Team.NONE) {
+            return messages.get("draw-message");
+        } else {
+            return messages.get("win-message").replaceAll("\\{teamname}", teamName);
+        }
+    }
+
+    public String getGameLeaveBeforeStartMessage() {
+        return messages.get("game-leave-before-start");
+    }
+
+    public String getNotEnoughPlayersMessage() {
+        return messages.get("not-enough-players");
+    }
+
+    public String getGameStartMessage(Court.Team team) {
+        return messages.get("game-start").replaceAll("\\{teamname}", getTeamName(team));
+    }
+
+    public String getScoredMessage(Court.Team team) {
+        return messages.get("scored").replaceAll("\\{teamname}", getTeamName(team));
+    }
+
+    public String getMatchPointMessage(Court.Team team) {
+        String teamName = getTeamName(team);
+        if (teamName.equals("")) {
+            teamName = "§eDouble";
+        }
+        return messages.get("match-point").replaceAll("\\{teamname}", teamName);
+    }
+
+    public String getLeaveGameThreatMessage() {
+        return messages.get("leave-game-threat");
+    }
+
+    public String getReturnToCourtMessage() {
+        return messages.get("return-to-court");
+    }
+
+    public String getLeftGameMessage() {
+        return messages.get("left-game");
+    }
+
+    public String getForfeitMessage(Court.Team team) {
+        if (team == Court.Team.NONE) {
+            return messages.get("double-forfeit");
+        } else {
+            return messages.get("team-forfeit").replaceAll("\\{teamname}", getTeamName(team));
+        }
+    }
+
+    public String getWrongSideMessage() {
+        return messages.get("wrong-side");
+    }
+
+    public String getTooManyHitsMessage() {
+        return messages.get("too-many-hits");
+    }
+
+    public String getClickForHelpMessage() {
+        return messages.get("click-for-help");
+    }
+
+    public String getNoPermissionsMessage() {
+        return messages.get("no-permissions");
+    }
+
+    public String getMatchStartedMessage() {
+        return messages.get("match-started");
+    }
+
+    public String getJoinedTeamMessage(Court.Team team) {
+        return messages.get("joined-team").replaceAll("\\{teamname}", getTeamName(team));
+    }
+
+    public String getFullTeamMessage(Court.Team team) {
+        return messages.get("full-team").replaceAll("\\{teamname}", getTeamName(team));
+    }
+
+    public String getMatchStartingWithNameMessage(Court court) {
+        return messages.get("match-starting-with-name").replaceAll("\\{court.name}", court.getDisplayName());
+    }
+
+    public String getMatchStartingWithoutNameMessage() {
+        return messages.get("match-starting-without-name");
+    }
+
+    public String getClickToJoinMessage() {
+        return messages.get("click-to-join");
     }
 }

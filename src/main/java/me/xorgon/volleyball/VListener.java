@@ -4,7 +4,6 @@ import com.supaham.commons.bukkit.text.FancyMessage;
 import me.xorgon.volleyball.events.BallLandEvent;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.util.Vector;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +35,12 @@ public class VListener implements Listener {
                 if (court.canHit()) {
                     Court.Team ballSide = court.getSide(ball.getLocation());
                     if (ballSide != court.getTeam(player) && ballSide != Court.Team.NONE) {
-                        player.sendMessage(manager.messages.wrongSide);
+                        player.sendMessage(manager.messages.getWrongSideMessage());
                         return;
                     }
                     if (court.getLastHitBy() == court.getTeam(player)) {
                         if (court.getHitCount() >= Court.MAX_HITS) {
-                            player.sendMessage(manager.messages.tooManyHits);
+                            player.sendMessage(manager.messages.getTooManyHitsMessage());
                             return;
                         }
                     } else {
@@ -95,9 +93,9 @@ public class VListener implements Listener {
 
                 if (!manager.isBouncedPlayer(player)) {
                     if (!player.hasPermission("vb.user")) {
-                        player.sendMessage(manager.messages.noPermissions);
+                        player.sendMessage(manager.messages.getNoPermissionsMessage());
                     } else {
-                        player.sendMessage(manager.messages.matchStarted);
+                        player.sendMessage(manager.messages.getMatchStartedMessage());
                     }
 
                     manager.addBouncedPlayer(player);
@@ -110,7 +108,7 @@ public class VListener implements Listener {
                 return;
             }
             FancyMessage helpMsg = new FancyMessage();
-            String help = manager.messages.clickForHelp;
+            String help = manager.messages.getClickForHelpMessage();
             helpMsg.text(help)
                     .command("/vb help")
                     .tooltip(help)
@@ -156,16 +154,16 @@ public class VListener implements Listener {
                 if (court.getDisplayName() != null) {
                     alertMsg = manager.messages.getMatchStartingWithNameMessage(court);
                 } else {
-                    alertMsg = manager.messages.matchStartingWithoutName;
+                    alertMsg = manager.messages.getMatchStartingWithoutNameMessage();
                 }
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
                         .filter(p -> !manager.isPlaying(p) && !manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
                         .forEach(p -> p.sendMessage(alertMsg));
 
                 FancyMessage joinMsg = new FancyMessage()
-                        .text(manager.messages.clickToJoin)
+                        .text(manager.messages.getClickToJoinMessage())
                         .command("/vb join " + court.getName())
-                        .tooltip(manager.messages.clickToJoin);
+                        .tooltip(manager.messages.getClickToJoinMessage());
                 Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
                         .filter(p -> !manager.isPlaying(p) && manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
                         .forEach(p -> joinMsg.send(p));
@@ -175,7 +173,7 @@ public class VListener implements Listener {
         } else if (manager.isPlaying(player)) {
             Court court = manager.getPlayingIn(player);
             if (!court.isStarted()) {
-                player.sendMessage(manager.messages.leftGame);
+                player.sendMessage(manager.messages.getLeftGameMessage());
                 court.removePlayer(player);
             }
         } else if (teamFullSent.contains(player)) {
@@ -195,7 +193,7 @@ public class VListener implements Listener {
     @EventHandler
     public void onPlayerBreakBlock(BlockBreakEvent event) {
         // Cancel the event if player is playing.
-        if (manager.isPlaying(event.getPlayer())){
+        if (manager.isPlaying(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
