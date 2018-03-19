@@ -72,11 +72,11 @@ public class VMessages {
         globalPlaceholders.put("court.maxhits", Court.MAX_HITS);
         globalPlaceholders.put("court.startdelay", Court.START_DELAY_SECS);
 
-        createMap();
+        createMapWithDefaults();
         replaceAllPlaceholders();
     }
 
-    private void createMap() {
+    public void createMapWithDefaults() {
         messages = new HashMap<>();
         messages.put("help", helpDefault);
         messages.put("full-game", fullGameDefault);

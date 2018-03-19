@@ -64,7 +64,9 @@ public class MessagesConfig {
 
             ConfigurationSection messagesSec = config.createSection("messages");
 
-            Map<String, String> messages = (new VMessages()).getMessages();
+            VMessages vMessages = new VMessages();
+            vMessages.createMapWithDefaults();
+            Map<String, String> messages = vMessages.getMessages();
             for (String key : messages.keySet()) {
                 if (!messages.get(key).isEmpty()) {
                     messagesSec.set(key, messages.get(key));
