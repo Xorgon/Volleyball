@@ -35,7 +35,7 @@ public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
     public void onDisable() {
         super.onDisable();
         manager.getCourts().values().forEach(Court::resetCourt);
-        manager.getConfig().save();
+        manager.getCourtsConfig().save();
         effectManager.dispose();
     }
 

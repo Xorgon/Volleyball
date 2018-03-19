@@ -423,9 +423,6 @@ public class Court {
             return;
         }
 
-        if (manager == null) {
-            System.out.println("MANAGER IS NUUUULLL");
-        }
         sendRedPlayersMessage(manager.messages.getGameStartMessage(Team.RED));
         sendBluePlayersMessage(manager.messages.getGameStartMessage(Team.BLUE));
 

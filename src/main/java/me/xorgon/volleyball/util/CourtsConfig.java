@@ -15,14 +15,14 @@ import java.util.Map;
 import static me.xorgon.volleyball.util.ConfigUtil.deserializeVector;
 import static me.xorgon.volleyball.util.ConfigUtil.serializeVector;
 
-public class Config {
+public class CourtsConfig {
 
     private VolleyballPlugin plugin = VolleyballPlugin.getInstance();
     private File file;
     private YamlConfiguration config;
     private VManager manager;
 
-    public Config(VManager manager) {
+    public CourtsConfig(VManager manager) {
         this.manager = manager;
     }
 
