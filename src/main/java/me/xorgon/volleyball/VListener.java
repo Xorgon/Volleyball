@@ -170,7 +170,8 @@ public class VListener implements Listener {
                 }
                 if (!alertMsg.isEmpty()) {
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
-                            .filter(p -> !manager.isPlaying(p) && !manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
+                            .filter(p -> !manager.isPlaying(p))
+                            .filter(p -> manager.getCourt(p) == null || (!manager.getCourt(p).isStarted() && manager.getCourt(p) != court))
                             .forEach(p -> p.sendMessage(alertMsg));
                 }
 
@@ -181,7 +182,8 @@ public class VListener implements Listener {
                             .command("/vb join " + court.getName())
                             .tooltip(clickToJoinMessage);
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
-                            .filter(p -> !manager.isPlaying(p) && manager.getCourt(p).isStarted() && manager.getCourt(p) != court)
+                            .filter(p -> !manager.isPlaying(p))
+                            .filter(p -> manager.getCourt(p) == null || (!manager.getCourt(p).isStarted() && manager.getCourt(p) != court))
                             .forEach(p -> joinMsg.send(p));
                 }
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
