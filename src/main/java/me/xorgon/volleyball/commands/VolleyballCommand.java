@@ -4,8 +4,12 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.minecraft.util.commands.NestedCommand;
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.extension.platform.Actor;
+import com.sk89q.worldedit.regions.Region;
+import com.supaham.commons.bukkit.utils.ChatUtils;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
@@ -18,8 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import java.util.List;
 
 public class VolleyballCommand {
 
@@ -221,11 +223,25 @@ public class VolleyballCommand {
             }
             Player player = (Player) sender;
             VManager manager = VolleyballPlugin.getInstance().getManager();
-            if (manager.getCourt(args.getString(0)) != null) {
+            Court court = manager.getCourt(args.getString(0));
+            if (court != null) {
                 WorldEditPlugin worldedit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-                Selection selection = worldedit.getSelection(player);
-                manager.getCourt(args.getString(0)).setRed(selection.getMinimumPoint(), selection.getMaximumPoint().add(new Vector(1, 0, 1)));
-                player.sendMessage(ChatColor.YELLOW + "Red side set.");
+                LocalSession playerSession = worldedit.getSession(player);
+                if (playerSession != null) {
+                    Region selection = null;
+                    try {
+                        selection = playerSession.getSelection(playerSession.getSelectionWorld());
+                    } catch (IncompleteRegionException e) {
+                        player.sendMessage(ChatColor.RED + "Your selection is incomplete.");
+                    }
+                    if (selection != null) {
+                        court.setRed(selection.getMinimumPoint(), selection.getMaximumPoint().add(1, 0, 1));
+                        court.setWorld(player.getWorld());
+                        player.sendMessage(ChatColor.YELLOW + "Red side set.");
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "WorldEdit could not find your session.");
+                }
             } else {
                 player.sendMessage(ChatColor.YELLOW + "That court does not exist.");
             }
@@ -238,11 +254,25 @@ public class VolleyballCommand {
             }
             Player player = (Player) sender;
             VManager manager = VolleyballPlugin.getInstance().getManager();
-            if (manager.getCourt(args.getString(0)) != null) {
+            Court court = manager.getCourt(args.getString(0));
+            if (court != null) {
                 WorldEditPlugin worldedit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-                Selection selection = worldedit.getSelection(player);
-                manager.getCourt(args.getString(0)).setBlue(selection.getMinimumPoint(), selection.getMaximumPoint().add(new Vector(1, 0, 1)));
-                player.sendMessage(ChatColor.YELLOW + "Blue side set.");
+                LocalSession playerSession = worldedit.getSession(player);
+                if (playerSession != null) {
+                    Region selection = null;
+                    try {
+                        selection = playerSession.getSelection(playerSession.getSelectionWorld());
+                    } catch (IncompleteRegionException e) {
+                        player.sendMessage(ChatColor.RED + "Your selection is incomplete.");
+                    }
+                    if (selection != null) {
+                        court.setBlue(selection.getMinimumPoint(), selection.getMaximumPoint().add(1, 0, 1));
+                        court.setWorld(player.getWorld());
+                        player.sendMessage(ChatColor.YELLOW + "Blue side set.");
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "WorldEdit could not find your session.");
+                }
             } else {
                 player.sendMessage(ChatColor.YELLOW + "That court does not exist.");
             }

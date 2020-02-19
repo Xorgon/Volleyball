@@ -1,5 +1,7 @@
 package me.xorgon.volleyball.objects;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.Vector3;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
@@ -8,9 +10,9 @@ import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
 import me.xorgon.volleyball.schedulers.NearbyPlayersChecker;
 import me.xorgon.volleyball.util.TitleUtil;
-import net.minecraft.server.v1_12_R1.EntitySlime;
+import net.minecraft.server.v1_13_R2.EntitySlime;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftSlime;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftSlime;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -140,6 +142,15 @@ public class Court {
         isInitialized();
     }
 
+    public void setRed(BlockVector3 point1, BlockVector3 point2) {
+        Vector point1Vector = new Vector(point1.getX(), point1.getY(), point1.getZ());
+        Vector point2Vector = new Vector(point2.getX(), point2.getY(), point2.getZ());
+        redMin = Vector.getMinimum(point1Vector, point2Vector);
+        redMax = Vector.getMaximum(point1Vector, point2Vector);
+        y = redMax.getY();
+        isInitialized();
+    }
+
     public void setRed(Location point1, Location point2) {
         redMin = Vector.getMinimum(point1.toVector(), point2.toVector());
         redMax = Vector.getMaximum(point1.toVector(), point2.toVector());
@@ -151,6 +162,14 @@ public class Court {
     public void setBlue(Vector point1, Vector point2) {
         blueMin = Vector.getMinimum(point1, point2);
         blueMax = Vector.getMaximum(point1, point2);
+        isInitialized();
+    }
+
+    public void setBlue(BlockVector3 point1, BlockVector3 point2) {
+        Vector point1Vector = new Vector(point1.getX(), point1.getY(), point1.getZ());
+        Vector point2Vector = new Vector(point2.getX(), point2.getY(), point2.getZ());
+        blueMin = Vector.getMinimum(point1Vector, point2Vector);
+        blueMax = Vector.getMaximum(point1Vector, point2Vector);
         isInitialized();
     }
 

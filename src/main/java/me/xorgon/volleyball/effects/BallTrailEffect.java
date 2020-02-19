@@ -3,9 +3,9 @@ package me.xorgon.volleyball.effects;
 import de.slikey.effectlib.Effect;
 import de.slikey.effectlib.EffectManager;
 import de.slikey.effectlib.EffectType;
-import de.slikey.effectlib.util.ParticleEffect;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.Color;
+import org.bukkit.Particle;
 import org.bukkit.entity.Slime;
 
 public class BallTrailEffect extends Effect {
@@ -24,6 +24,6 @@ public class BallTrailEffect extends Effect {
     @Override
     public void onRun() {
         Color color = court.getLastHitBy() == Court.Team.RED ? Color.RED : Color.BLUE;
-        display(ParticleEffect.REDSTONE, ((Slime) getEntity()).getEyeLocation(), color);
+        display(Particle.REDSTONE, ((Slime) getEntity()).getEyeLocation(), color);
     }
 }

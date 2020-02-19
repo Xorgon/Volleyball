@@ -1,7 +1,7 @@
 package me.xorgon.volleyball.util;
 
-import com.supaham.commons.bukkit.text.FancyMessage;
 import com.supaham.commons.bukkit.title.Title;
+import net.kyori.text.TextComponent;
 import org.bukkit.entity.Player;
 
 /**
@@ -11,26 +11,26 @@ public class TitleUtil {
 
     public static void sendTitle(Player player, String title, String subtitle) {
         Title.sendTimes(player, 0, 30, 10);
-        Title.sendSubtitle(player, new FancyMessage(title), new FancyMessage(subtitle));
+        Title.sendSubtitle(player, TextComponent.of(title), TextComponent.of(subtitle));
     }
 
     public static void sendTitle(Player player, String title, String subtitle, boolean overrideTimes) {
         if (!overrideTimes) {
             Title.sendTimes(player, 0, 30, 10);
         }
-        Title.sendSubtitle(player, new FancyMessage(title), new FancyMessage(subtitle));
+        Title.sendSubtitle(player, TextComponent.of(title), TextComponent.of(subtitle));
     }
 
     public static void sendTitle(Player player, String title) {
         Title.sendTimes(player, 0, 30, 10);
-        Title.sendTitle(player, new FancyMessage(title));
+        Title.sendTitle(player, TextComponent.of(title));
     }
 
     public static void sendTitle(Player player, String title, boolean overrideTimes) {
         if (!overrideTimes) {
             Title.sendTimes(player, 0, 30, 10);
         }
-        Title.sendTitle(player, new FancyMessage(title));
+        Title.sendTitle(player, TextComponent.of(title));
     }
 
 }
