@@ -1,7 +1,6 @@
 package me.xorgon.volleyball.objects;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.Vector3;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
@@ -10,9 +9,11 @@ import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
 import me.xorgon.volleyball.schedulers.NearbyPlayersChecker;
 import me.xorgon.volleyball.util.TitleUtil;
-import net.minecraft.server.v1_13_R2.EntitySlime;
-import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftSlime;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -22,8 +23,12 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Court {
 
@@ -49,6 +54,8 @@ public class Court {
     public static int MAX_HITS = 3;
     private long lastHitMS;
     public static int HIT_PERIOD_MS = 250;
+    private long landedMS;
+    public static int LANDING_GRACE_MS = 100;
 
     private List<Player> redPlayers = new ArrayList<>();
     private List<Player> bluePlayers = new ArrayList<>();
@@ -203,27 +210,17 @@ public class Court {
             removeBall();
         }
         Slime ball = (Slime) loc.getWorld().spawnEntity(loc.setDirection(new Vector(0, 1, 0)), EntityType.SLIME);
-        fixStupidMinecraftNoAI(ball);
+        landedMS = -1;
+        ball.setAI(false);
+        ball.setRotation(0, 0);
         ball.setSize(ballSize);
         ball.setGravity(false);
+        ball.setFallDistance(9001);
         this.ball = ball;
         ball.setGlowing(true);
         setBallColour(turn);
         trailEffect = new BallTrailEffect(VolleyballPlugin.getInstance().getEffectManager(), this);
         trailEffect.start();
-    }
-
-    public void fixStupidMinecraftNoAI(Slime ball) {
-        EntitySlime handle = ((CraftSlime) ball).getHandle();
-        try {
-            Field b = handle.goalSelector.getClass().getDeclaredField("b");
-            b.setAccessible(true);
-            ((Set) b.get(handle.goalSelector)).clear();
-            ((Set) b.get(handle.targetSelector)).clear();
-            handle.yaw = 0;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     public void setBallColour(Team team) {
@@ -547,6 +544,18 @@ public class Court {
 
     public void resetHitCount() {
         hitCount = 0;
+    }
+
+    public void setLandedMS() {
+        landedMS = new Date().getTime();
+    }
+
+    public void resetLandedMS() {
+        landedMS = -1;
+    }
+
+    public boolean hasLanded() {
+        return (landedMS != -1 && new Date().getTime() - landedMS > LANDING_GRACE_MS);
     }
 
     public boolean canHit() {

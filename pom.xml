@@ -6,7 +6,7 @@
 
     <groupId>me.xorgon</groupId>
     <artifactId>Volleyball</artifactId>
-    <version>1.3.3</version>
+    <version>1.3.4</version>
 
 
     <properties>
@@ -14,7 +14,7 @@
         <main.class>${package}.VolleyballPlugin</main.class>
 
         <commons-bukkit.version>0.6.0-SNAPSHOT</commons-bukkit.version>
-        <spigot-api.version>1.13.2-R0.1-SNAPSHOT</spigot-api.version>
+        <spigot-api.version>1.14.4-R0.1-SNAPSHOT</spigot-api.version>
         <effectlib.version>6.1-SNAPSHOT</effectlib.version>
     </properties>
 

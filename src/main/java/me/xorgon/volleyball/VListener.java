@@ -67,9 +67,11 @@ public class VListener implements Listener {
                         factor += 0.5;
                     }
                     factor *= court.getPower();
+                    ball.setAI(true);
                     ball.setVelocity(dir.clone().multiply(2.7).setY(dir.getY() + 1.1).multiply(factor));
                     court.setLastHitBy(court.getTeam(player));
                     court.incHitCount();
+                    court.resetLandedMS();
                 }
             }
         }
@@ -79,6 +81,11 @@ public class VListener implements Listener {
     public void onSlimeDamage(EntityDamageEvent event) {
         if (manager.isVolleyball(event.getEntity())) {
             event.setCancelled(true);
+            if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                Court court = manager.getCourt((Slime) event.getEntity());
+                court.setLandedMS();
+                ((Slime) event.getEntity()).setAI(false);
+            }
         }
     }
 

@@ -17,7 +17,7 @@ public class BallChecker implements Runnable {
     public void run() {
         for (Court court : manager.getCourts().values()) {
             if (court.getBall() != null) {
-                if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY()) {
+                if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY() || court.hasLanded()) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getPlugin(), new BallRemovalScheduler(court), 2L);
                 }
             }
@@ -34,7 +34,7 @@ public class BallChecker implements Runnable {
 
         @Override
         public void run() {
-            if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY()) {
+            if (court.getBall().isOnGround() || court.getBall().getLocation().getY() < court.getY() || court.hasLanded()) {
                 Bukkit.getPluginManager().callEvent(new BallLandEvent(court));
             }
         }
