@@ -30,6 +30,7 @@ public class MessagesConfig {
         file = new File(plugin.getDataFolder(), "messages.yml");
 
         if (!file.exists()) {
+            this.save();
             return new VMessages();
         }
 
