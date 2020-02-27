@@ -238,8 +238,10 @@ public class VListener implements Listener {
     }
 
     @EventHandler
-    public void onServerShutdown(WorldUnloadEvent event) {
-        manager.getCourts().values().forEach(Court::resetCourt);
+    public void onWorldUnload(WorldUnloadEvent event) {
+        manager.getCourts().values().stream()
+                .filter(court -> court.getWorld() == event.getWorld())
+                .forEach(Court::resetCourt);
     }
 
     @EventHandler
@@ -249,15 +251,6 @@ public class VListener implements Listener {
                     && court.getWorld() == null
                     && event.getWorld().getName().equals(court.getWorldName())) {
                 court.setWorld(event.getWorld());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onWorldUnload(WorldUnloadEvent event) {
-        for (Court court : manager.getCourts().values()) {
-            if (court.getWorld() == event.getWorld()) {
-                court.setWorld(null);
             }
         }
     }
