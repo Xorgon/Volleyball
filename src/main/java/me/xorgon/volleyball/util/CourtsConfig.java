@@ -47,7 +47,7 @@ public class CourtsConfig {
             Court court = manager.addCourt(courtName);
             court.setRed(deserializeVector(courtSec.get("redMin")), deserializeVector(courtSec.get("redMax")));
             court.setBlue(deserializeVector(courtSec.get("blueMin")), deserializeVector(courtSec.get("blueMax")));
-            court.setWorld(Bukkit.getWorld(courtSec.getString("world")));
+            court.setWorldName(courtSec.getString("world"));
 
             if (courtSec.contains("ballSize")){
                 court.setBallSize(courtSec.getInt("ballSize"));
@@ -83,7 +83,7 @@ public class CourtsConfig {
             courtSec.set("redMax", serializeVector(court.getRedMax()));
             courtSec.set("blueMin", serializeVector(court.getBlueMin()));
             courtSec.set("blueMax", serializeVector(court.getBlueMax()));
-            courtSec.set("world", court.getWorld().getName());
+            courtSec.set("world", court.getWorldName());
 
             courtSec.set("ballSize", court.getBallSize());
 

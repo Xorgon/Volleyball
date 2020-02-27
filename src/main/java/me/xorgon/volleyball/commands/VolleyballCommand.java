@@ -82,24 +82,32 @@ public class VolleyballCommand {
             VManager manager = VolleyballPlugin.getInstance().getManager();
             if (manager.getCourts().containsKey(args.getString(0))) {
                 Court court = manager.getCourt(args.getString(0));
-                int redSize = court.getRedPlayers().size();
-                int blueSize = court.getBluePlayers().size();
-                if (redSize < blueSize && redSize < court.getMaxTeamSize()) {
-                    player.teleport(court.getCenter(Court.Team.RED));
-                } else if (blueSize < court.getMaxTeamSize()) {
-                    player.teleport(court.getCenter(Court.Team.BLUE));
+                if (court.getWorldName() != null && court.getWorld() == null) {
+                    player.sendMessage(manager.messages.getWorldNotLoadedMessage());
+                } else if (!court.isInitialized()) {
+                    player.sendMessage(manager.messages.getCourtNotReadyMessage());
                 } else {
-                    Vector redVec = court.getCenter(Court.Team.RED).toVector();
-                    Vector blueVec = court.getCenter(Court.Team.BLUE).toVector();
-                    Vector mid = redVec.midpoint(blueVec);
-                    Vector across = redVec.clone().subtract(blueVec);
-                    mid.add(new Vector(0, 1, 0).crossProduct(across.clone().multiply(1 / across.length())).multiply(across.length()));
-                    String fullGameMessage = manager.messages.getFullGameMessage();
-                    if (!fullGameMessage.isEmpty()) {
-                        player.sendMessage(fullGameMessage);
+                    int redSize = court.getRedPlayers().size();
+                    int blueSize = court.getBluePlayers().size();
+                    if (redSize < blueSize && redSize < court.getMaxTeamSize()) {
+                        player.teleport(court.getCenter(Court.Team.RED));
+                    } else if (blueSize < court.getMaxTeamSize()) {
+                        player.teleport(court.getCenter(Court.Team.BLUE));
+                    } else {
+                        Vector redVec = court.getCenter(Court.Team.RED).toVector();
+                        Vector blueVec = court.getCenter(Court.Team.BLUE).toVector();
+                        Vector mid = redVec.midpoint(blueVec);
+                        Vector across = redVec.clone().subtract(blueVec);
+                        mid.add(new Vector(0, 1, 0).crossProduct(across.clone().multiply(1 / across.length())).multiply(across.length()));
+                        String fullGameMessage = manager.messages.getFullGameMessage();
+                        if (!fullGameMessage.isEmpty()) {
+                            player.sendMessage(fullGameMessage);
+                        }
+                        player.teleport(mid.toLocation(court.getWorld()));
                     }
-                    player.teleport(mid.toLocation(court.getWorld()));
                 }
+            } else {
+                player.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
     }
@@ -111,15 +119,27 @@ public class VolleyballCommand {
     @CommandPermissions("vb.admin")
     public static void start(CommandContext args, CommandSender sender) {
         if (sender instanceof Player) {
+            VManager manager = VolleyballPlugin.getInstance().getManager();
+            Court court;
             if (args.argsLength() == 0) {
-                Court court = VolleyballPlugin.getInstance().getManager().getCourt((Player) sender);
-                if (court != null) {
-                    court.startGame(true);
-                } else {
+                court = manager.getCourt((Player) sender);
+                if (court == null) {
                     sender.sendMessage(ChatColor.RED + "You are not within a court and you have not specified a court.");
+                    return;
                 }
             } else {
-                VolleyballPlugin.getInstance().getManager().getCourt(args.getString(0)).startGame(true);
+                court = manager.getCourt(args.getString(0));
+                if (court == null) {
+                    sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
+                    return;
+                }
+            }
+            if (court.isInitialized()) {
+                court.startGame(true);
+            } else if (court.getWorld() == null && court.getWorldName() != null) {
+                sender.sendMessage(manager.messages.getWorldNotLoadedMessage());
+            } else {
+                sender.sendMessage(manager.messages.getCourtNotReadyMessage());
             }
         }
     }
@@ -137,7 +157,7 @@ public class VolleyballCommand {
                 if (manager.isInCourt(player)) {
                     manager.getCourt(player).endGame();
                 } else {
-                    sender.sendMessage(ChatColor.YELLOW + "You aren't in a court.");
+                    sender.sendMessage(manager.messages.getNotInCourtMessage());
                 }
             } else {
                 manager.getCourt(args.getString(0)).endGame();
@@ -156,7 +176,7 @@ public class VolleyballCommand {
                 Location loc = player.getLocation().add(0, 1.25, 0);
                 manager.getCourt(player).spawnBall(loc);
             } else {
-                player.sendMessage(ChatColor.YELLOW + "You aren't in a court.");
+                player.sendMessage(manager.messages.getNotInCourtMessage());
             }
         }
     }
@@ -170,7 +190,7 @@ public class VolleyballCommand {
             if (manager.isInCourt(player)) {
                 player.sendMessage(ChatColor.YELLOW + "You are in court " + ChatColor.LIGHT_PURPLE + manager.getCourt(player).getName());
             } else {
-                player.sendMessage(ChatColor.YELLOW + "You are not in a court.");
+                player.sendMessage(manager.messages.getNotInCourtMessage());
             }
         }
     }
@@ -243,7 +263,7 @@ public class VolleyballCommand {
                     player.sendMessage(ChatColor.RED + "WorldEdit could not find your session.");
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + "That court does not exist.");
+                player.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 
@@ -274,7 +294,7 @@ public class VolleyballCommand {
                     player.sendMessage(ChatColor.RED + "WorldEdit could not find your session.");
                 }
             } else {
-                player.sendMessage(ChatColor.YELLOW + "That court does not exist.");
+                player.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 
@@ -293,7 +313,7 @@ public class VolleyballCommand {
                     sender.sendMessage(ChatColor.YELLOW + "Unset court display name.");
                 }
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "That court doesn't exist.");
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 
@@ -312,7 +332,7 @@ public class VolleyballCommand {
                     sender.sendMessage(ChatColor.YELLOW + "Reset ball size to default (3).");
                 }
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "That court doesn't exist.");
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 
@@ -331,7 +351,7 @@ public class VolleyballCommand {
                     sender.sendMessage(ChatColor.YELLOW + "Reset minimum team size to default (1).");
                 }
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "That court doesn't exist.");
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 
@@ -350,7 +370,7 @@ public class VolleyballCommand {
                     sender.sendMessage(ChatColor.YELLOW + "Reset maximum team size to default (6).");
                 }
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "That court doesn't exist.");
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
             }
         }
 

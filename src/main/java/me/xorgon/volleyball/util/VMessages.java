@@ -9,6 +9,8 @@ import java.util.Map;
 public class VMessages {
     private Map<String, String> messages;
 
+    private boolean needsRepair;
+
     private Map<String, Integer> globalPlaceholders = new HashMap<>();
 
     private String helpDefault = "§dHow to play volleyball:\n"
@@ -67,11 +69,20 @@ public class VMessages {
 
     private String clickToJoinDefault = "§dClick here to join the game!";
 
+    private String notInCourtDefault = "§eYou aren't in a court.";
+
+    private String courtDoesNotExistDefault = "§cThat court does not exist.";
+
+    private String worldNotLoadedDefault = "§cThe world for that court is not loaded.";
+
+    private String courtNotReadyDefault = "§cThat court is not ready yet.";
+
     public VMessages() {
         globalPlaceholders.put("court.maxscore", Court.MAX_SCORE);
         globalPlaceholders.put("court.maxhits", Court.MAX_HITS);
         globalPlaceholders.put("court.startdelay", Court.START_DELAY_SECS);
 
+        needsRepair = false;
         createMapWithDefaults();
         replaceAllPlaceholders();
     }
@@ -106,6 +117,12 @@ public class VMessages {
         messages.put("match-starting-with-name", matchStartingWithNameDefault);
         messages.put("match-starting-without-name", matchStartingWithoutNameDefault);
         messages.put("click-to-join", clickToJoinDefault);
+
+        // VolleyballCommand
+        messages.put("not-in-court", notInCourtDefault);
+        messages.put("court-does-not-exist", courtDoesNotExistDefault);
+        messages.put("world-not-loaded", worldNotLoadedDefault);
+        messages.put("court-not-ready", courtNotReadyDefault);
     }
 
     public boolean hasMessageKey(String key) {
@@ -143,6 +160,13 @@ public class VMessages {
         return teamName;
     }
 
+    public boolean needsRepair() {
+        return needsRepair;
+    }
+
+    public void setNeedsRepair(boolean needsRepair) {
+        this.needsRepair = needsRepair;
+    }
 
     // Message getters.
 
@@ -245,5 +269,21 @@ public class VMessages {
 
     public String getClickToJoinMessage() {
         return messages.get("click-to-join");
+    }
+
+    public String getNotInCourtMessage() {
+        return messages.get("not-in-court");
+    }
+
+    public String getCourtDoesNotExistMessage() {
+        return messages.get("court-does-not-exist");
+    }
+
+    public String getWorldNotLoadedMessage() {
+        return messages.get("world-not-loaded");
+    }
+
+    public String getCourtNotReadyMessage() {
+        return messages.get("court-not-ready");
     }
 }

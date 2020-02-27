@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.util.Vector;
 
@@ -239,5 +240,25 @@ public class VListener implements Listener {
     @EventHandler
     public void onServerShutdown(WorldUnloadEvent event) {
         manager.getCourts().values().forEach(Court::resetCourt);
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        for (Court court : manager.getCourts().values()) {
+            if (court.getWorldName() != null
+                    && court.getWorld() == null
+                    && event.getWorld().getName().equals(court.getWorldName())) {
+                court.setWorld(event.getWorld());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onWorldUnload(WorldUnloadEvent event) {
+        for (Court court : manager.getCourts().values()) {
+            if (court.getWorld() == event.getWorld()) {
+                court.setWorld(null);
+            }
+        }
     }
 }

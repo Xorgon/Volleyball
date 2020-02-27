@@ -45,6 +45,7 @@ public class Court {
 
     private double y;
 
+    private String worldName;
     private World world;
 
     private Slime ball;
@@ -187,7 +188,16 @@ public class Court {
         isInitialized();
     }
 
+    public void setWorldName(String worldName) {
+        this.worldName = worldName;
+        this.world = Bukkit.getWorld(worldName);
+        isInitialized();
+    }
+
     public void setWorld(World world) {
+        if (world != null) {
+            this.worldName = world.getName();
+        }
         this.world = world;
         isInitialized();
     }
@@ -500,6 +510,10 @@ public class Court {
 
     public World getWorld() {
         return world;
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public int getMinTeamSize() {

@@ -2,18 +2,12 @@ package me.xorgon.volleyball.util;
 
 import me.xorgon.volleyball.VManager;
 import me.xorgon.volleyball.VolleyballPlugin;
-import me.xorgon.volleyball.objects.Court;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-
-import static me.xorgon.volleyball.util.ConfigUtil.deserializeVector;
-import static me.xorgon.volleyball.util.ConfigUtil.serializeVector;
 
 public class MessagesConfig {
 
@@ -40,22 +34,21 @@ public class MessagesConfig {
         ConfigurationSection messagesSec = config.getConfigurationSection("messages");
 
         if (messagesSec == null) {
-            for (String key : messages.getMessages().keySet()) {
-                messages.setMessage(key, "");
-            }
+            messages.setNeedsRepair(true);
         } else {
             for (String key : messagesSec.getKeys(false)) {
-                if (messages.hasMessageKey(key)) {
+                if (messages.hasMessageKey(key)) {  // Ensure no additional messages are loaded.
                     messages.setMessage(key, messagesSec.getString(key));
+                } else {
+                    messages.setNeedsRepair(true);
                 }
             }
             for (String key : messages.getMessages().keySet()) {
                 if (!messagesSec.contains(key)) {
-                    messages.setMessage(key, "");
+                    messages.setNeedsRepair(true);
                 }
             }
         }
-
         return messages;
     }
 
@@ -79,6 +72,26 @@ public class MessagesConfig {
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
+        } else if (manager.messages.needsRepair()) {  // Or something was wrong with the config.
+            config = new YamlConfiguration();
+
+            ConfigurationSection messagesSec = config.createSection("messages");
+
+            VMessages vMessages = manager.messages;
+            Map<String, String> messages = vMessages.getMessages();
+            for (String key : messages.keySet()) {
+                if (!messages.get(key).isEmpty()) {
+                    messagesSec.set(key, messages.get(key));
+                }
+            }
+
+            try {
+                config.save(file);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            vMessages.setNeedsRepair(false);
         }
     }
 }

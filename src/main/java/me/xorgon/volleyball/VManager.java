@@ -39,6 +39,9 @@ public class VManager {
 
         messagesConfig = new MessagesConfig(this);
         messages = messagesConfig.load();
+        if (messages.needsRepair()) {
+            messagesConfig.save();
+        }
     }
 
     public Court addCourt(String name) {
