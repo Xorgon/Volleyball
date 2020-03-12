@@ -183,6 +183,7 @@ public class VListener implements Listener {
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.user"))
                             .filter(p -> !manager.isPlaying(p))
                             .filter(p -> manager.getCourt(p) == null || (!manager.getCourt(p).isStarted() && manager.getCourt(p) != court))
+                            .filter(court::isInInviteRange)
                             .forEach(p -> p.sendMessage(alertMsg));
                 }
 
@@ -194,6 +195,7 @@ public class VListener implements Listener {
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
                             .filter(p -> !manager.isPlaying(p))
                             .filter(p -> manager.getCourt(p) == null || (!manager.getCourt(p).isStarted() && manager.getCourt(p) != court))
+                            .filter(court::isInInviteRange)
                             .forEach(p -> ChatUtils.sendComponent(p, joinMsg));
                 }
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);

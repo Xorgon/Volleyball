@@ -49,7 +49,7 @@ public class CourtsConfig {
             court.setBlue(deserializeVector(courtSec.get("blueMin")), deserializeVector(courtSec.get("blueMax")));
             court.setWorldName(courtSec.getString("world"));
 
-            if (courtSec.contains("ballSize")){
+            if (courtSec.contains("ballSize")) {
                 court.setBallSize(courtSec.getInt("ballSize"));
             }
 
@@ -58,6 +58,9 @@ public class CourtsConfig {
             }
             if (courtSec.contains("maxTeamSize")) {
                 court.setMaxTeamSize(courtSec.getInt("maxTeamSize"));
+            }
+            if (courtSec.contains("inviteRange")) {
+                court.setInviteRange(courtSec.getInt("inviteRange"));
             }
 
             if (courtSec.contains("displayName")) {
@@ -89,6 +92,7 @@ public class CourtsConfig {
 
             courtSec.set("minTeamSize", court.getMinTeamSize());
             courtSec.set("maxTeamSize", court.getMaxTeamSize());
+            courtSec.set("inviteRange", court.getInviteRange());
 
             if (court.getDisplayName() != null) {
                 courtSec.set("displayName", court.getDisplayName());

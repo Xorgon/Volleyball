@@ -43,6 +43,7 @@ public class Court {
     private Vector redMin;
     private Vector redMax;
 
+
     private double y;
 
     private String worldName;
@@ -64,6 +65,7 @@ public class Court {
 
     private int minTeamSize = 1;
     private int maxTeamSize = 6;
+    private int inviteRange = -1;
 
     private int redScore = 0;
     private int blueScore = 0;
@@ -506,6 +508,19 @@ public class Court {
 
     public Vector getRedMax() {
         return redMax;
+    }
+
+    public int getInviteRange() {
+        return inviteRange;
+    }
+
+    public void setInviteRange(int inviteRange) {
+        this.inviteRange = inviteRange;
+    }
+
+    public boolean isInInviteRange(Player player) {
+        return inviteRange < 0 ||
+                (this.world == player.getWorld() && this.getCenter().distance(player.getLocation()) <= inviteRange);
     }
 
     public World getWorld() {

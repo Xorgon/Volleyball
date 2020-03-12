@@ -374,6 +374,25 @@ public class VolleyballCommand {
             }
         }
 
+        @Command(aliases = {"inviterange"},
+                desc = "Set the range within which people are invited to play,",
+                usage = "<court name> <invite range>",
+                min = 1)
+        public static void inviteRange(CommandContext args, CommandSender sender) {
+            VManager manager = VolleyballPlugin.getInstance().getManager();
+            if (manager.getCourt(args.getString(0)) != null) {
+                if (args.argsLength() > 1) {
+                    manager.getCourt(args.getString(0)).setInviteRange(args.getInteger(1));
+                    sender.sendMessage(ChatColor.YELLOW + "Set invite range.");
+                } else {
+                    manager.getCourt(args.getString(0)).setInviteRange(-1);
+                    sender.sendMessage(ChatColor.YELLOW + "Reset invite range to unlimited.");
+                }
+            } else {
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
+            }
+        }
+
     }
 
 }
