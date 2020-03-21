@@ -58,6 +58,7 @@ public class Court {
     public static int HIT_PERIOD_MS = 250;
     private long landedMS;
     public static int LANDING_GRACE_MS = 100;
+    private double powerFactor = 1;
 
     private List<Player> redPlayers = new ArrayList<>();
     private List<Player> bluePlayers = new ArrayList<>();
@@ -214,7 +215,7 @@ public class Court {
         double L1 = Math.abs(unitV.dot(redMax.clone().subtract(blueMin)));
         double L2 = Math.abs(unitV.dot(blueMax.clone().subtract(redMin)));
         double length = Math.max(L1, L2);
-        return Math.pow(length, 0.75) / 16.792; // Values adjusted for best experience.
+        return powerFactor * Math.pow(length, 0.75) / 16.792; // Values adjusted for best experience.
     }
 
     public void spawnBall(Location loc) {
@@ -545,6 +546,14 @@ public class Court {
 
     public void setMaxTeamSize(int maxTeamSize) {
         this.maxTeamSize = maxTeamSize;
+    }
+
+    public double getPowerFactor() {
+        return powerFactor;
+    }
+
+    public void setPowerFactor(double powerFactor) {
+        this.powerFactor = powerFactor;
     }
 
     public String getDisplayName() {

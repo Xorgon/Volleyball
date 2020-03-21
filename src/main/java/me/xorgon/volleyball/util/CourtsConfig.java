@@ -53,6 +53,10 @@ public class CourtsConfig {
                 court.setBallSize(courtSec.getInt("ballSize"));
             }
 
+            if (courtSec.contains("power")) {
+                court.setPowerFactor(courtSec.getDouble("power"));
+            }
+
             if (courtSec.contains("minTeamSize")) {
                 court.setMinTeamSize(courtSec.getInt("minTeamSize"));
             }
@@ -89,6 +93,7 @@ public class CourtsConfig {
             courtSec.set("world", court.getWorldName());
 
             courtSec.set("ballSize", court.getBallSize());
+            courtSec.set("power", court.getPowerFactor());
 
             courtSec.set("minTeamSize", court.getMinTeamSize());
             courtSec.set("maxTeamSize", court.getMaxTeamSize());

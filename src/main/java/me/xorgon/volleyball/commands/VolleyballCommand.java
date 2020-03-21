@@ -336,6 +336,25 @@ public class VolleyballCommand {
             }
         }
 
+        @Command(aliases = {"power"},
+                desc = "Set the power multiplier for the court,",
+                usage = "<court name> <power multiplier>",
+                min = 1)
+        public static void power(CommandContext args, CommandSender sender) {
+            VManager manager = VolleyballPlugin.getInstance().getManager();
+            if (manager.getCourt(args.getString(0)) != null) {
+                if (args.argsLength() > 1) {
+                    manager.getCourt(args.getString(0)).setPowerFactor(args.getDouble(1));
+                    sender.sendMessage(ChatColor.YELLOW + "Set power multiplier.");
+                } else {
+                    manager.getCourt(args.getString(0)).setPowerFactor(1);
+                    sender.sendMessage(ChatColor.YELLOW + "Reset power multiplier to 1.");
+                }
+            } else {
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
+            }
+        }
+
         @Command(aliases = {"minteamsize"},
                 desc = "Set the minimum team size for the court,",
                 usage = "<court name> <team size>",
