@@ -365,6 +365,9 @@ public class Court {
     }
 
     public void endGame(boolean serverShutdown) {
+        if (!isStarted()) {
+            return;
+        }
         removeBall();
         String winMessage = manager.messages.getWinMessage(getWinning());
         if (!winMessage.isEmpty()) {
@@ -442,6 +445,11 @@ public class Court {
     public void startGame(boolean force) {
         if (!force && started) {
             return;
+        }
+
+        if (force) {
+            endGame();
+            getNearbyPlayers().stream().filter(p -> isInCourt(p.getLocation()) && !getAllPlayers().contains(p)).forEach(p -> addPlayer(p, getSide(p.getLocation())));
         }
 
         getAllPlayers().stream().filter(p -> !isInCourt(p.getLocation())).forEach(p -> {

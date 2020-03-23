@@ -127,7 +127,7 @@ public class VListener implements Listener {
                 return;
             }
 
-
+            // Not started
             String help = manager.messages.getClickForHelpMessage();
             TextComponent helpMsg = TextComponent.of(help)
                     .clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vb help"))
@@ -171,6 +171,8 @@ public class VListener implements Listener {
                     }
                 }
             }
+
+            // Send invites
             if (!court.isStarting()) {
 
                 String alertMsg;
@@ -210,9 +212,7 @@ public class VListener implements Listener {
                 }
                 court.removePlayer(player);
             }
-        } else if (teamFullSent.contains(player)) {
-            teamFullSent.remove(player);
-        }
+        } else teamFullSent.remove(player);
     }
 
     @EventHandler

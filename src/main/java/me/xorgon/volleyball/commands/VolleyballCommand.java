@@ -91,8 +91,10 @@ public class VolleyballCommand {
                     int blueSize = court.getBluePlayers().size();
                     if (redSize < blueSize && redSize < court.getMaxTeamSize()) {
                         player.teleport(court.getCenter(Court.Team.RED));
+                        if (player.isFlying()) player.setFlying(false);
                     } else if (blueSize < court.getMaxTeamSize()) {
                         player.teleport(court.getCenter(Court.Team.BLUE));
+                        if (player.isFlying()) player.setFlying(false);
                     } else {
                         Vector redVec = court.getCenter(Court.Team.RED).toVector();
                         Vector blueVec = court.getCenter(Court.Team.BLUE).toVector();
@@ -104,6 +106,7 @@ public class VolleyballCommand {
                             player.sendMessage(fullGameMessage);
                         }
                         player.teleport(mid.toLocation(court.getWorld()));
+                        if (player.isFlying()) player.setFlying(false);
                     }
                 }
             } else {

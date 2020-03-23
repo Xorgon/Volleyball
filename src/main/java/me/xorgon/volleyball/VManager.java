@@ -51,17 +51,12 @@ public class VManager {
     }
 
     public void removeCourt(String name) {
-        if (courts.containsKey(name)) {
-            courts.remove(name);
-        }
+        Court court = courts.remove(name);
+        court.endGame();
     }
 
     public Court getCourt(String name) {
-        if (courts.containsKey(name)) {
-            return courts.get(name);
-        } else {
-            return null;
-        }
+        return courts.getOrDefault(name, null);
     }
 
     public Court getCourt(Player player) {
