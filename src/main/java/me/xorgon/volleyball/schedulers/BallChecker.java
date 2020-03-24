@@ -20,7 +20,8 @@ public class BallChecker implements Runnable {
                 if (court.getBall().isOnGround()
                         || court.getBall().getLocation().getY() < court.getY()
                         || court.hasLanded()
-                        || court.getBall().getLocation().getBlock().isLiquid()) {
+                        || court.getBall().getLocation().getBlock().isLiquid()
+                        || court.getBall().getLocation().distance(court.getCenter()) > 10 * court.getCenter(Court.Team.RED).distance(court.getCenter(Court.Team.BLUE))) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getPlugin(), new BallRemovalScheduler(court), 2L);
                 }
             }
@@ -40,7 +41,8 @@ public class BallChecker implements Runnable {
             if (court.getBall().isOnGround()
                     || court.getBall().getLocation().getY() < court.getY()
                     || court.hasLanded()
-                    || court.getBall().getLocation().getBlock().isLiquid()) {
+                    || court.getBall().getLocation().getBlock().isLiquid()
+                    || court.getBall().getLocation().distance(court.getCenter()) > 10 * court.getCenter(Court.Team.RED).distance(court.getCenter(Court.Team.BLUE))) {
                 Bukkit.getPluginManager().callEvent(new BallLandEvent(court));
             }
         }
