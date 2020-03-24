@@ -384,6 +384,7 @@ public class Court {
         bluePlayers = new ArrayList<>();
         setRedScore(0);
         setBlueScore(0);
+        resetHitCount();
         if (started) {
             started = false;
         }
