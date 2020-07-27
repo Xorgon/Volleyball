@@ -95,7 +95,9 @@ public class Court {
 
         scoreboard = VolleyballPlugin.getInstance().getServer().getScoreboardManager().getNewScoreboard();
         scoreboard.registerNewTeam("red").setPrefix(ChatColor.RED + "");
+        scoreboard.getTeam("red").setColor(ChatColor.RED);
         scoreboard.registerNewTeam("blue").setPrefix(ChatColor.BLUE + "");
+        scoreboard.getTeam("blue").setColor(ChatColor.BLUE);
         Objective obj = scoreboard.registerNewObjective("vbscore", "dummy");
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         obj.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Score");
