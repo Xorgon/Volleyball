@@ -1,11 +1,13 @@
 package me.xorgon.volleyball;
 
-import com.supaham.commons.bukkit.utils.ChatUtils;
 import me.xorgon.volleyball.events.BallLandEvent;
 import me.xorgon.volleyball.objects.Court;
-import net.kyori.text.TextComponent;
-import net.kyori.text.event.ClickEvent;
-import net.kyori.text.event.HoverEvent;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
@@ -129,9 +131,10 @@ public class VListener implements Listener {
 
             // Not started
             String help = manager.messages.getClickForHelpMessage();
-            TextComponent helpMsg = TextComponent.of(help)
-                    .clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vb help"))
-                    .hoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.of(help)));
+            BaseComponent[] helpMsg = new ComponentBuilder(help)
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vb help"))
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(help)))
+                    .create();
             if (court.getSide(player.getLocation()) == Court.Team.RED) {
                 if (court.getRedPlayers().size() < court.getMaxTeamSize()) {
                     if (!court.getRedPlayers().contains(player)) {
@@ -140,9 +143,9 @@ public class VListener implements Listener {
                         }
                         court.addPlayer(player, Court.Team.RED);
                         String joinedTeamMessage = manager.messages.getJoinedTeamMessage(Court.Team.RED);
-                        TextComponent msg = TextComponent.of(joinedTeamMessage);
-                        if (!joinedTeamMessage.isEmpty()) ChatUtils.sendComponent(player, msg);
-                        if (!help.isEmpty()) ChatUtils.sendComponent(player, helpMsg);
+                        TextComponent msg = new TextComponent(joinedTeamMessage);
+                        if (!joinedTeamMessage.isEmpty()) player.spigot().sendMessage(msg);
+                        if (!help.isEmpty()) player.spigot().sendMessage(helpMsg);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
@@ -159,9 +162,9 @@ public class VListener implements Listener {
                         }
                         court.addPlayer(player, Court.Team.BLUE);
                         String joinedTeamMessage = manager.messages.getJoinedTeamMessage(Court.Team.BLUE);
-                        TextComponent msg = TextComponent.of(joinedTeamMessage);
-                        if (!joinedTeamMessage.isEmpty()) ChatUtils.sendComponent(player, msg);
-                        if (!help.isEmpty()) ChatUtils.sendComponent(player, helpMsg);
+                        TextComponent msg = new TextComponent(joinedTeamMessage);
+                        if (!joinedTeamMessage.isEmpty()) player.spigot().sendMessage(msg);
+                        if (!help.isEmpty()) player.spigot().sendMessage(helpMsg);
                     }
                 } else {
                     if (!teamFullSent.contains(player)) {
@@ -191,14 +194,15 @@ public class VListener implements Listener {
 
                 String clickToJoinMessage = manager.messages.getClickToJoinMessage();
                 if (!clickToJoinMessage.isEmpty()) {
-                    TextComponent joinMsg = TextComponent.of(clickToJoinMessage)
-                            .clickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vb join " + court.getName()))
-                            .hoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.of(clickToJoinMessage)));
+                    BaseComponent[] joinMsg = new ComponentBuilder(clickToJoinMessage)
+                            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vb join " + court.getName()))
+                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(clickToJoinMessage)))
+                            .create();
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("vb.tp"))
                             .filter(p -> !manager.isPlaying(p))
                             .filter(p -> manager.getCourt(p) == null || (!manager.getCourt(p).isStarted() && manager.getCourt(p) != court))
                             .filter(court::isInInviteRange)
-                            .forEach(p -> ChatUtils.sendComponent(p, joinMsg));
+                            .forEach(p -> p.spigot().sendMessage(joinMsg));
                 }
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> court.startGame(false), Court.START_DELAY_SECS * 20);
                 court.setStarting(true);

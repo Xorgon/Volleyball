@@ -8,7 +8,6 @@ import me.xorgon.volleyball.effects.BallLandEffect;
 import me.xorgon.volleyball.effects.BallTrailEffect;
 import me.xorgon.volleyball.effects.RomanCandleEffect;
 import me.xorgon.volleyball.schedulers.NearbyPlayersChecker;
-import me.xorgon.volleyball.util.TitleUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -626,7 +625,7 @@ public class Court {
         String message = manager.messages.getScoredMessage(scoringTeam);
 
         if (!message.isEmpty()) {
-            getAllPlayers().forEach(p -> TitleUtil.sendTitle(p, "", message));
+            getAllPlayers().forEach(p -> p.sendTitle(" ", message, 0, 30, 10));
         }
 
         boolean redMP = getRedScore() == Court.MAX_SCORE - 1 && getBlueScore() < MAX_SCORE;

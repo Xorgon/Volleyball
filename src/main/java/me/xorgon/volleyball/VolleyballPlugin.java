@@ -4,14 +4,14 @@ import com.sk89q.bukkit.util.CommandsManagerRegistration;
 import com.sk89q.minecraft.util.commands.*;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandsManager;
-import com.supaham.commons.bukkit.SimpleCommonPlugin;
 import de.slikey.effectlib.EffectManager;
 import me.xorgon.volleyball.commands.VolleyballCommand;
 import me.xorgon.volleyball.objects.Court;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
+public class VolleyballPlugin extends JavaPlugin {
 
     private static VolleyballPlugin instance;
     private VManager manager;
@@ -25,7 +25,7 @@ public class VolleyballPlugin extends SimpleCommonPlugin<VolleyballPlugin> {
         super.onEnable();
         instance = this;
         manager = new VManager();
-        registerEvents(new VListener());
+        getServer().getPluginManager().registerEvents(new VListener(), this);
         setupCommands();
         effectManager = new EffectManager(this);
         effectManager.enableDebug(true);
