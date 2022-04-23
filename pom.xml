@@ -6,14 +6,14 @@
 
     <groupId>me.xorgon</groupId>
     <artifactId>Volleyball</artifactId>
-    <version>1.3.13</version>
+    <version>1.3.14</version>
 
 
     <properties>
         <package>me.xorgon.volleyball</package>
         <main.class>${package}.VolleyballPlugin</main.class>
 
-        <spigot-api.version>1.17.1-R0.1-SNAPSHOT</spigot-api.version>
+        <spigot-api.version>1.18.2-R0.1-SNAPSHOT</spigot-api.version>
         <effectlib.version>6.1-SNAPSHOT</effectlib.version>
     </properties>
 
@@ -24,15 +24,15 @@
         </repository>
         <repository>
             <id>elmakers</id>
-            <url>http://maven.elmakers.com/repository/</url>
+            <url>https://maven.elmakers.com/repository/</url>
         </repository>
         <repository>
             <id>onarandombox-tp</id>
-            <url>http://repo.onarandombox.com/content/repositories/thirdparty-dev/</url>
+            <url>https://repo.onarandombox.com/content/repositories/thirdparty-dev/</url>
         </repository>
         <repository>
             <id>enderzone</id>
-            <url>http://ci.ender.zone/plugin/repository/everything/</url>
+            <url>https://ci.ender.zone/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
@@ -52,13 +52,13 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>7.1.1-SNAPSHOT</version>
+            <version>7.2.10-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.1.1-SNAPSHOT</version>
+            <version>7.2.10-SNAPSHOT</version>
         </dependency>
 
         <dependency>
