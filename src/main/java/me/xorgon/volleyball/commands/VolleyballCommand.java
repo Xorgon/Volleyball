@@ -337,6 +337,25 @@ public class VolleyballCommand {
             }
         }
 
+        @Command(aliases = {"ymax"},
+                desc = "Set the maximum y position for the court,",
+                usage = "<court name> <y max>",
+                min = 1)
+        public static void yMax(CommandContext args, CommandSender sender) {
+            VManager manager = VolleyballPlugin.getInstance().getManager();
+            if (manager.getCourt(args.getString(0)) != null) {
+                if (args.argsLength() > 1) {
+                    manager.getCourt(args.getString(0)).setYMax(args.getDouble(1));
+                    sender.sendMessage(ChatColor.YELLOW + "Set maximum y position.");
+                } else {
+                    manager.getCourt(args.getString(0)).setYMax(320);
+                    sender.sendMessage(ChatColor.YELLOW + "Reset maximum y position to 320");
+                }
+            } else {
+                sender.sendMessage(manager.messages.getCourtDoesNotExistMessage());
+            }
+        }
+
         @Command(aliases = {"power"},
                 desc = "Set the power multiplier for the court,",
                 usage = "<court name> <power multiplier>",

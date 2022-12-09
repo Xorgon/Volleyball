@@ -44,6 +44,7 @@ public class Court {
 
 
     private double y;
+    private double yMax = 320;
 
     private String worldName;
     private World world;
@@ -111,7 +112,7 @@ public class Court {
         if (!initialized) {
             return false;
         }
-        if (location.getWorld() == world && location.getY() >= y) {
+        if (location.getWorld() == world && location.getY() >= y && location.getY() <= yMax) {
             location.setY(y);
             if (location.toVector().isInAABB(redMin, redMax) || location.toVector().isInAABB(blueMin, blueMax)) {
                 return true;
@@ -204,6 +205,14 @@ public class Court {
         }
         this.world = world;
         isInitialized();
+    }
+
+    public double getYMax() {
+        return yMax;
+    }
+
+    public void setYMax(double yMax) {
+        this.yMax = yMax;
     }
 
     public Slime getBall() {

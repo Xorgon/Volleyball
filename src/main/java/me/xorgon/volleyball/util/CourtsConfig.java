@@ -49,6 +49,10 @@ public class CourtsConfig {
             court.setBlue(deserializeVector(courtSec.get("blueMin")), deserializeVector(courtSec.get("blueMax")));
             court.setWorldName(courtSec.getString("world"));
 
+            if (courtSec.contains("yMax")) {
+                court.setYMax(courtSec.getDouble("yMax"));
+            }
+
             if (courtSec.contains("ballSize")) {
                 court.setBallSize(courtSec.getInt("ballSize"));
             }
@@ -92,6 +96,7 @@ public class CourtsConfig {
             courtSec.set("blueMax", serializeVector(court.getBlueMax()));
             courtSec.set("world", court.getWorldName());
 
+            courtSec.set("yMax", court.getYMax());
             courtSec.set("ballSize", court.getBallSize());
             courtSec.set("power", court.getPowerFactor());
 
