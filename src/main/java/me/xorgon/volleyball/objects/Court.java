@@ -337,11 +337,14 @@ public class Court {
     public void serve() {
         spawnBall(getCenter(turn));
         setLastHitBy(turn);
-        if (turn == Team.RED) {
-            turn = Team.BLUE;
-        } else {
-            turn = Team.RED;
-        }
+        // Do not switch turns one by one
+        // Instead, turn is set to the team who scored a point.
+
+        // if (turn == Team.RED) {
+        //     turn = Team.BLUE;
+        // } else {
+        //     turn = Team.RED;
+        // }
     }
 
     public Location getCenter(Team team) {
@@ -421,6 +424,7 @@ public class Court {
         if (isFinished()) {
             endGame();
         } else {
+            // Before this function is called (after adding point in score(scoringTeam) function) the turn is set to the scoring team.
             serve();
         }
     }
@@ -616,18 +620,23 @@ public class Court {
     }
 
     public boolean canHit() {
-        long now = new Date().getTime();
-        if (now - lastHitMS < HIT_PERIOD_MS) {
-            return false;
-        } else {
-            lastHitMS = now;
-            return true;
-        }
+        // Always allow hit
+        return true;
+        // long now = new Date().getTime();
+        // if (now - lastHitMS < HIT_PERIOD_MS) {
+        //     return false;
+        // } else {
+        //     lastHitMS = now;
+        //     return true;
+        // }
     }
 
     public void score(Team scoringTeam) {
 
         addPoint(scoringTeam);
+
+        // Peter made the scoring team serve next.
+        turn = scoringTeam;
 
         hitCount = 0;
 
