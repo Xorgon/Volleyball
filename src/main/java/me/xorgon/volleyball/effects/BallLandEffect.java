@@ -38,7 +38,7 @@ public class BallLandEffect extends Effect {
         for (int i = 0; i < particles; i++) {
             Vector vector = RandomUtils.getRandomVector().multiply(count/7.5);
             location.add(vector);
-            display(Particle.REDSTONE, location, color);
+            display(Particle.DUST, location, color);
             location.subtract(vector);
         }
         if (new Random().nextDouble() < 0.2){ // Random low frequency.

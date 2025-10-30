@@ -24,6 +24,6 @@ public class BallTrailEffect extends Effect {
     @Override
     public void onRun() {
         Color color = court.getLastHitBy() == Court.Team.RED ? Color.RED : Color.BLUE;
-        display(Particle.REDSTONE, ((Slime) getEntity()).getEyeLocation(), color);
+        display(Particle.DUST, ((Slime) getEntity()).getEyeLocation(), color);
     }
 }

@@ -156,8 +156,8 @@ public class Court {
     }
 
     public void setRed(BlockVector3 point1, BlockVector3 point2) {
-        Vector point1Vector = new Vector(point1.getX(), point1.getY(), point1.getZ());
-        Vector point2Vector = new Vector(point2.getX(), point2.getY(), point2.getZ());
+        Vector point1Vector = new Vector(point1.x(), point1.y(), point1.z());
+        Vector point2Vector = new Vector(point2.x(), point2.y(), point2.z());
         redMin = Vector.getMinimum(point1Vector, point2Vector);
         redMax = Vector.getMaximum(point1Vector, point2Vector);
         y = redMax.getY();
@@ -179,8 +179,8 @@ public class Court {
     }
 
     public void setBlue(BlockVector3 point1, BlockVector3 point2) {
-        Vector point1Vector = new Vector(point1.getX(), point1.getY(), point1.getZ());
-        Vector point2Vector = new Vector(point2.getX(), point2.getY(), point2.getZ());
+        Vector point1Vector = new Vector(point1.x(), point1.y(), point1.z());
+        Vector point2Vector = new Vector(point2.x(), point2.y(), point2.z());
         blueMin = Vector.getMinimum(point1Vector, point2Vector);
         blueMax = Vector.getMaximum(point1Vector, point2Vector);
         isInitialized();
